@@ -1,0 +1,38 @@
+version: "3.9"
+services:
+  postgres:
+    image: postgres
+    networks:
+      - go-gin-template-net
+    ports:
+      - "5432:5432"
+    environment:
+      - "POSTGRES_USER=postgres"
+      - "POSTGRES_PASSWORD=postgres"
+    volumes:
+      - service-data:/var/lib/postgresql/data
+      # copy the sql script to create db & table
+      - ./scripts/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    healthcheck:
+      test: pg_isready -U postgres
+  go-gin-template:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.distroless
+    image: go-gin-template
+    container_name: go-gin-template
+    networks:
+      - go-gin-template-net
+    ports:
+      - 8080:8080
+    env_file:
+      - ./config/container.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+networks:
+  go-gin-template-net:
+    name: go-gin-template-network
+volumes:
+  service-data:
+    driver: local
