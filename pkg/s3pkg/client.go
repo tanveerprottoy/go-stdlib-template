@@ -3,12 +3,8 @@ package s3pkg
 import (
 	"sync"
 
-	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/credentials"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/s3"
-	"github.com/aws/aws-sdk-go/service/s3/s3manager"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 )
 
 var (
@@ -16,40 +12,52 @@ var (
 	once     sync.Once
 )
 
+// S3Client struct
 type Client struct {
-	// Uploader declaration
-	Uploader *s3manager.Uploader
-
-	// Session declaration
-	Session *session.Session
-
-	// Session declaration
-	S3Svc *s3.S3
+	S3Client *s3.Client
 }
 
+// GetInstance returns a singleton of Client
 func GetInstance() *Client {
 	once.Do(func() {
 		instance = new(Client)
-		instance.init()
 	})
 	return instance
 }
 
-func (d *Client) init() {
-	r := config.GetEnvValue("AWS_REGION")
-	d.Session = session.Must(
-		session.NewSession(
-			&aws.Config{
-				Region: aws.String(r),
-				Credentials: credentials.NewStaticCredentials(
-					AccessKeyID,
-					SecretAccessKey,
-					"", // a token will be created when the session it's used.
-				),
-			},
-		),
-	)
-	// Create an uploader with the session and default options
-	d.Uploader = s3manager.NewUploader(d.Session)
-	d.S3Svc = s3.New(d.Session)
+// Init initializes the client with option
+//
+//	ex: options := s3.Options{
+//	   Region:      "us-west-2",
+//	   Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(accessKey, secretKey, "")),
+//	}
+//
+// ex: override
+//
+//	func(o *s3.Options) {
+//		o.Region = "us-east-1"
+//		o.UseAccelerate = true
+//	})
+func (d *Client) Init(options s3.Options, optFn func(*s3.Options)) {
+	if optFn != nil {
+		d.S3Client = s3.New(options, optFn)
+	} else {
+		d.S3Client = s3.New(options)
+	}
+}
+
+// InitWithConfig initializes the client with the
+// passed config and if override needed pass the optFn
+// ex: cfg, err := config.LoadDefaultConfig(context.TODO())
+//
+//	optFun = func(o *s3.Options) {
+//		o.Region = "us-west-2"
+//		o.UseAccelerate = true
+//	})
+func (d *Client) InitWithConfig(cfg aws.Config, optFn func(*s3.Options)) {
+	if optFn != nil {
+		d.S3Client = s3.NewFromConfig(cfg, optFn)
+	} else {
+		d.S3Client = s3.NewFromConfig(cfg)
+	}
 }
