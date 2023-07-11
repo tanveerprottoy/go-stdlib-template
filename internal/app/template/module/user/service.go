@@ -4,12 +4,12 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/user/dto"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/user/entity"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/pkg/constant"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/data/sqlxpkg"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/errorpkg"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/timepkg"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user/dto"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user/entity"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/timepkg"
 )
 
 type Service struct {

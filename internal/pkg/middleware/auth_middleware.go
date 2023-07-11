@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/auth"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/pkg/constant"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/response"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/auth"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
 )
 
 type AuthMiddleware struct {

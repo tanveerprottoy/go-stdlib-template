@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/auth/dto"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/pkg/constant"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/config"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/httppkg"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/response"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/auth/dto"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
 )
 
 type ServiceRemote struct {

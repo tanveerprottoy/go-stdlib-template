@@ -1,6 +1,6 @@
 package auth
 
-import "github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/user"
+import "github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user"
 
 type Module struct {
 	Service *Service

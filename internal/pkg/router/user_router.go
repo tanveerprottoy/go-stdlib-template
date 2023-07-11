@@ -1,9 +1,9 @@
 package router
 
 import (
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/user"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/pkg/constant"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/pkg/middleware"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/middleware"
 
 	"github.com/go-chi/chi"
 )

@@ -1,10 +1,11 @@
 package multipart
 
 import (
+	"mime/multipart"
 	"net/http"
 
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/file"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/httppkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
 )
 
 func ParseMultipartForm(r *http.Request) (*http.Request, error) {
@@ -37,4 +38,21 @@ func HandleFiles(r *http.Request, keys []string, rootDir string) ([]string, erro
 		paths = append(paths, p)
 	}
 	return paths, nil
+}
+
+func GetFileContentType(file multipart.File) (string, error) {
+	// to sniff the content type only the first
+	// 512 bytes are used.
+	buf := make([]byte, 512)
+
+	_, err := file.Read(buf)
+
+	if err != nil {
+		return "", err
+	}
+
+	// the function that actually does the trick
+	contentType := http.DetectContentType(buf)
+
+	return contentType, nil
 }

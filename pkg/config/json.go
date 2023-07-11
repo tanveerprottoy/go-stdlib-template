@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"log"
 
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/file"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
 )
 
 var (

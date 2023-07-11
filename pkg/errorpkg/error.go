@@ -4,7 +4,7 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/constant"
 )
 
 func NewError(m string) error {

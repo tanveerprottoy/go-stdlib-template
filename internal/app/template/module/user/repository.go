@@ -2,8 +2,8 @@ package user
 
 import (
 	"github.com/jmoiron/sqlx"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/user/entity"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/data/sqlxpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user/entity"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
 )
 
 const TableName = "users"

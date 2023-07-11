@@ -4,6 +4,7 @@ import (
 	"io"
 	"io/ioutil"
 	"mime/multipart"
+	"net/http"
 	"os"
 	"path/filepath"
 )
@@ -13,45 +14,45 @@ func GetPWD() (string, error) {
 }
 
 func FilePathWalkDir(root string) ([]string, error) {
-    var files []string
-    err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
-        if !info.IsDir() {
-            files = append(files, path)
-        }
-        return nil
-    })
-    return files, err
+	var files []string
+	err := filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
+		if !info.IsDir() {
+			files = append(files, path)
+		}
+		return nil
+	})
+	return files, err
 }
 
 func IOReadDir(root string) ([]string, error) {
-    var files []string
-    fileInfo, err := ioutil.ReadDir(root)
-    if err != nil {
-        return files, err
-    }
+	var files []string
+	fileInfo, err := ioutil.ReadDir(root)
+	if err != nil {
+		return files, err
+	}
 
-    for _, file := range fileInfo {
-        files = append(files, file.Name())
-    }
-    return files, nil
+	for _, file := range fileInfo {
+		files = append(files, file.Name())
+	}
+	return files, nil
 }
 
 func OSReadDir(root string) ([]string, error) {
-    var files []string
-    f, err := os.Open(root)
-    if err != nil {
-        return files, err
-    }
-    fileInfo, err := f.Readdir(-1)
-    f.Close()
-    if err != nil {
-        return files, err
-    }
+	var files []string
+	f, err := os.Open(root)
+	if err != nil {
+		return files, err
+	}
+	fileInfo, err := f.Readdir(-1)
+	f.Close()
+	if err != nil {
+		return files, err
+	}
 
-    for _, file := range fileInfo {
-        files = append(files, file.Name())
-    }
-    return files, nil
+	for _, file := range fileInfo {
+		files = append(files, file.Name())
+	}
+	return files, nil
 }
 
 func ReadFile(name string) ([]byte, error) {
@@ -73,4 +74,21 @@ func SaveFile(multipartFile multipart.File, rootDir string, fileName string) (st
 		return "", err
 	}
 	return fullPath, nil
+}
+
+func GetFileContentType(file *os.File) (string, error) {
+	// to sniff the content type only the first
+	// 512 bytes are used.
+	buf := make([]byte, 512)
+
+	_, err := file.Read(buf)
+
+	if err != nil {
+		return "", err
+	}
+
+	// the function that actually does the trick
+	contentType := http.DetectContentType(buf)
+
+	return contentType, nil
 }

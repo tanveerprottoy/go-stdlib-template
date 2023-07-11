@@ -4,12 +4,12 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/auth"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/user"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/pkg/constant"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/pkg/middleware"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/pkg/router"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/data/sqlxpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/auth"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/middleware"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/router"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
 )
 
 // App struct

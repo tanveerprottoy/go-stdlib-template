@@ -5,7 +5,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/adapter"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/adapter"
 )
 
 func Request[T any](method string, url string, header http.Header, body io.Reader, httpClient *HTTPClient) (*T, error) {

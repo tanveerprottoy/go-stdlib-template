@@ -5,12 +5,12 @@ import (
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/user/dto"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/pkg/constant"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/adapter"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/httppkg"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/jsonpkg"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/response"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user/dto"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/adapter"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
 )
 
 // Hanlder is responsible for extracting data

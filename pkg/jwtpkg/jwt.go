@@ -4,8 +4,8 @@ import (
 	"errors"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/config"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/timepkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/timepkg"
 )
 
 // Create the JWT key used to create the signature

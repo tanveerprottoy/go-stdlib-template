@@ -3,14 +3,14 @@ package user
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/jmoiron/sqlx"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/user/entity"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/data/sqlxpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user/entity"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
 )
 
 type Module struct {
-	Handler         *Handler
-	Service         *Service
-	Repository      sqlxpkg.Repository[entity.User]
+	Handler    *Handler
+	Service    *Service
+	Repository sqlxpkg.Repository[entity.User]
 }
 
 func NewModule(db *sqlx.DB, validate *validator.Validate) *Module {

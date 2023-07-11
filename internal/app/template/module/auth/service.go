@@ -3,10 +3,10 @@ package auth
 import (
 	"net/http"
 
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/user"
-	"github.com/tanveerprottoy/go-stdlib-template/internal/app/template/module/user/entity"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/httppkg"
-	"github.com/tanveerprottoy/go-stdlib-template/pkg/jwtpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user/entity"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/jwtpkg"
 )
 
 type Service struct {
