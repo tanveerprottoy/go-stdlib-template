@@ -10,16 +10,8 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
-func buildContext(ctx context.Context) context.Context {
-	if ctx == nil {
-		ctx = context.Background()
-	}
-	return ctx
-}
-
 // CreateBucket creates a bucket
 func CreateBucket(bucketName, region string, client *s3.Client, ctx context.Context) (*s3.CreateBucketOutput, error) {
-	ctx = buildContext(ctx)
 	// Create the S3 Bucket
 	return client.CreateBucket(ctx, &s3.CreateBucketInput{
 		Bucket: aws.String(bucketName),
@@ -31,14 +23,12 @@ func CreateBucket(bucketName, region string, client *s3.Client, ctx context.Cont
 
 // GetBucket determines whether we have this bucket
 func GetBucket(bucketName string, client *s3.Client, ctx context.Context) (*s3.HeadBucketOutput, error) {
-	ctx = buildContext(ctx)
 	// Do we have this Bucket
 	return client.HeadBucket(ctx, &s3.HeadBucketInput{Bucket: aws.String(bucketName)})
 }
 
 // PutObject puts object to s3
 func PutObject(bucketName, fileName string, file multipart.File, client *s3.Client, ctx context.Context) (*s3.PutObjectOutput, error) {
-	ctx = buildContext(ctx)
 	return client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(fileName),
@@ -51,7 +41,6 @@ func PutObjectWG(bucketName, fileName string, file multipart.File, wg *sync.Wait
 	defer func() {
 		wg.Done()
 	}()
-	ctx = buildContext(ctx)
 	return client.PutObject(ctx, &s3.PutObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(fileName),
@@ -61,7 +50,6 @@ func PutObjectWG(bucketName, fileName string, file multipart.File, wg *sync.Wait
 
 // GetObject retrieve object from s3
 func GetObject(fileName string, file multipart.File, bucketName, objectKey string, client *s3.Client, ctx context.Context) (*s3.GetObjectOutput, error) {
-	ctx = buildContext(ctx)
 	return client.GetObject(ctx, &s3.GetObjectInput{
 		Bucket: aws.String(bucketName),
 		Key:    aws.String(objectKey),
