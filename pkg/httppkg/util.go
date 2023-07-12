@@ -10,12 +10,12 @@ import (
 	"github.com/go-chi/chi"
 )
 
-func GetURLParam(req *http.Request, key string) string {
-	return chi.URLParam(req, key)
+func GetURLParam(r *http.Request, key string) string {
+	return chi.URLParam(r, key)
 }
 
-func GetQueryParam(req *http.Request, key string) string {
-	return req.URL.Query().Get(key)
+func GetQueryParam(r *http.Request, key string) string {
+	return r.URL.Query().Get(key)
 }
 
 func ParseAuthToken(r *http.Request) ([]string, error) {

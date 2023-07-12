@@ -15,6 +15,7 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/router"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/s3pkg"
 )
 
@@ -40,6 +41,10 @@ func (a *App) initDB() {
 	a.DBClient = sqlxpkg.GetInstance()
 }
 
+func (a *App) initDir() {
+	file.CreateDirIfNotExists("./uploads")
+}
+
 func (a *App) initS3() {
 	a.S3Client = s3pkg.GetInstance()
 	a.S3Client.Init(s3.Options{
@@ -62,11 +67,13 @@ func (a *App) initModules() {
 func (a *App) initModuleRouters() {
 	m := a.Middlewares[0].(*middleware.AuthMiddleware)
 	router.RegisterUserRoutes(a.router, constant.V1, a.UserModule, m)
+	router.RegisterFileUploadRoutes(a.router, constant.V1, a.FileUploadModule)
 }
 
 // Init app
 func (a *App) initComponents() {
 	a.initDB()
+	a.initDir()
 	a.router = router.NewRouter()
 	a.initS3()
 	a.initModules()

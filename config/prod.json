@@ -4,5 +4,5 @@
     "dbHost": "localhost",
     "dbUsername": "postgres",
     "dbPass": "root",
-    "dbName": "gateway_service"
+    "dbName": "basic_db"
 }

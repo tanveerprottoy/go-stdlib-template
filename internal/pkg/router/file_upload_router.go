@@ -9,7 +9,7 @@ import (
 
 func RegisterFileUploadRoutes(router *Router, version string, module *fileupload.Module) {
 	router.Mux.Route(
-		constant.ApiPattern+version+constant.UsersPattern,
+		constant.ApiPattern+version+constant.FilesPattern,
 		func(r chi.Router) {
 			r.Post(constant.RootPattern+"upload-one", module.Handler.UploadOne)
 			r.Post(constant.RootPattern+"upload-one-disk", module.Handler.UploadOneDisk)

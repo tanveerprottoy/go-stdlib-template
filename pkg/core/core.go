@@ -26,7 +26,7 @@ func ExtractFieldsFromStruct[T any](t *T) []any {
 
 func CheckTypeInt(x any) bool {
 	switch x.(type) {
-	case int, int32, int64 :
+	case int, int32, int64:
 		return true
 	default:
 		return false
@@ -35,7 +35,7 @@ func CheckTypeInt(x any) bool {
 
 func CheckTypeFloat(x any) bool {
 	switch x.(type) {
-	case float32, float64 :
+	case float32, float64:
 		return true
 	default:
 		return false
@@ -44,7 +44,7 @@ func CheckTypeFloat(x any) bool {
 
 func TypeCastIfInt(x any) (int32, error) {
 	switch v := x.(type) {
-	case int, int32, int64 :
+	case int, int32, int64:
 		return v.(int32), nil
 	default:
 		return -1, errors.New("TypeCastIfInt error")
@@ -53,9 +53,15 @@ func TypeCastIfInt(x any) (int32, error) {
 
 func TypeCastIfFloat(x any) (float32, error) {
 	switch v := x.(type) {
-	case float32, float64 :
+	case float32, float64:
 		return v.(float32), nil
 	default:
 		return -1, errors.New("TypeCastIfFloat error")
 	}
+}
+
+// x << y, results in x*2^y
+// ex: left shift 32 << 20 which results in 32*2^20 = 33554432
+func LeftShift(x, y int64) int64 {
+	return x << y
 }

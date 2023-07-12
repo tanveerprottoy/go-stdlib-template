@@ -5,6 +5,7 @@ import (
 
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/s3pkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/uuidpkg"
 )
 
 type Service struct {
@@ -29,13 +30,13 @@ func (s *Service) UploadOne(p []byte, w http.ResponseWriter, r *http.Request) (m
 	return m, nil
 }
 
-func (s *Service) UploadOneDisk(w http.ResponseWriter, r *http.Request) (map[string]string, error) {
-	m := map[string]string{"url": ""}
-	urls, err := multipart.HandleFiles(r, []string{"file"}, "./uploads")
+func (s *Service) UploadOneDisk(r *http.Request) (map[string]string, error) {
+	m := map[string]string{"path": ""}
+	path, err := multipart.HandleFileForKey("file", "./uploads", uuidpkg.NewUUIDStr(), r)
 	if err != nil {
 		return m, err
 	}
-	m["url"] = urls[0]
+	m["path"] = path
 	return m, nil
 }
 

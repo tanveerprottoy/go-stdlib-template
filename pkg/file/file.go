@@ -1,6 +1,7 @@
 package file
 
 import (
+	"errors"
 	"io"
 	"io/ioutil"
 	"mime/multipart"
@@ -53,6 +54,15 @@ func OSReadDir(root string) ([]string, error) {
 		files = append(files, file.Name())
 	}
 	return files, nil
+}
+
+func CreateDirIfNotExists(path string) error {
+	_, err := os.Stat(path)
+	if errors.Is(err, os.ErrNotExist) {
+		return os.Mkdir(path, os.ModePerm)
+	} else {
+		return err
+	}
 }
 
 func ReadFile(name string) ([]byte, error) {

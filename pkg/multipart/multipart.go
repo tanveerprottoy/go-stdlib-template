@@ -3,31 +3,38 @@ package multipart
 import (
 	"mime/multipart"
 	"net/http"
+	"path/filepath"
 
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
 )
 
-func ParseMultipartForm(r *http.Request) error {
-	// left shift 32 << 20 which results in 32*2^20 = 33554432
-	// x << y, results in x*2^y
-	return r.ParseMultipartForm(32 << 20)
+func ParseMultipartForm(maxMemory int64, r *http.Request) error {
+	return r.ParseMultipartForm(maxMemory)
 }
 
-func HandleFiles(r *http.Request, keys []string, rootDir string) ([]string, error) {
-	var paths []string
-	err := ParseMultipartForm(r)
+func RetrieveSaveFile(key, rootDir, destFileName string, r *http.Request) (string, error) {
+	// Retrieve the file from form data
+	f, h, err := httppkg.GetFile(r, key)
 	if err != nil {
-		return paths, err
+		return "", err
 	}
+	defer f.Close()
+	p, err := file.SaveFile(f, rootDir, destFileName+filepath.Ext(h.Filename))
+	if err != nil {
+		return "", err
+	}
+	return p, nil
+}
+
+func HandleFileForKey(key string, rootDir, destFileName string, r *http.Request) (string, error) {
+	return RetrieveSaveFile(key, rootDir, destFileName, r)
+}
+
+func HandleFilesForKeys(keys []string, rootDir, destFileName string, r *http.Request) ([]string, error) {
+	var paths []string
 	for _, k := range keys {
-		// Retrieve the file from form data
-		f, header, err := httppkg.GetFile(r, k)
-		if err != nil {
-			return paths, err
-		}
-		defer f.Close()
-		p, err := file.SaveFile(f, rootDir, header.Filename)
+		p, err := RetrieveSaveFile(k, rootDir, destFileName, r)
 		if err != nil {
 			return paths, err
 		}
