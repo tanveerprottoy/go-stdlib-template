@@ -15,6 +15,7 @@ func RegisterFileUploadRoutes(router *Router, version string, module *fileupload
 			r.Post(constant.RootPattern+"upload-one-disk", module.Handler.UploadOneDisk)
 			r.Post(constant.RootPattern+"upload-many", module.Handler.UploadMany)
 			r.Post(constant.RootPattern+"upload-many-disk", module.Handler.UploadManyDisk)
+			r.Post(constant.RootPattern+"upload-many-disk-keys", module.Handler.UploadManyWithKeysDisk)
 		},
 	)
 }

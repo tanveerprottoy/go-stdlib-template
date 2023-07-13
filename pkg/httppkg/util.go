@@ -2,7 +2,6 @@ package httppkg
 
 import (
 	"errors"
-	"mime/multipart"
 	"net/http"
 	"net/url"
 	"strings"
@@ -30,10 +29,6 @@ func ParseAuthToken(r *http.Request) ([]string, error) {
 		return nil, errors.New("token format is invalid")
 	}
 	return splits, nil
-}
-
-func GetFile(r *http.Request, k string) (multipart.File, *multipart.FileHeader, error) {
-	return r.FormFile(k)
 }
 
 func BuildURL(base, path string, queriesMap map[string]string) (string, error) {

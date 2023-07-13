@@ -6,43 +6,39 @@ import (
 	"path/filepath"
 
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
 )
 
+// ParseMultipartForm parses the MultipartForm
 func ParseMultipartForm(maxMemory int64, r *http.Request) error {
 	return r.ParseMultipartForm(maxMemory)
 }
 
-func RetrieveSaveFile(key, rootDir, destFileName string, r *http.Request) (string, error) {
-	// Retrieve the file from form data
-	f, h, err := httppkg.GetFile(r, key)
-	if err != nil {
-		return "", err
-	}
+// GetFiles retrieves files from MultipartForm
+func GetFiles(key string, r *http.Request) []*multipart.FileHeader {
+	return r.MultipartForm.File[key]
+}
+
+// GetValues retrieves values from MultipartForm
+func GetValues(r *http.Request) map[string][]string {
+	return r.MultipartForm.Value
+}
+
+// GetFormFile retrieves a file from MultipartForm
+func GetFormFile(key string, r *http.Request) (multipart.File, *multipart.FileHeader, error) {
+	return r.FormFile(key)
+}
+
+// SaveFile saves the file 
+func SaveFile(f multipart.File, header *multipart.FileHeader, rootDir, destFileName string, r *http.Request) (string, error) {
 	defer f.Close()
-	p, err := file.SaveFile(f, rootDir, destFileName+filepath.Ext(h.Filename))
+	p, err := file.SaveFile(f, rootDir, destFileName+filepath.Ext(header.Filename))
 	if err != nil {
 		return "", err
 	}
 	return p, nil
 }
 
-func HandleFileForKey(key string, rootDir, destFileName string, r *http.Request) (string, error) {
-	return RetrieveSaveFile(key, rootDir, destFileName, r)
-}
-
-func HandleFilesForKeys(keys []string, rootDir, destFileName string, r *http.Request) ([]string, error) {
-	var paths []string
-	for _, k := range keys {
-		p, err := RetrieveSaveFile(k, rootDir, destFileName, r)
-		if err != nil {
-			return paths, err
-		}
-		paths = append(paths, p)
-	}
-	return paths, nil
-}
-
+// GetFileContentType fetches content type of the file
 func GetFileContentType(file multipart.File) (string, error) {
 	// to sniff the content type only the first
 	// 512 bytes are used.
