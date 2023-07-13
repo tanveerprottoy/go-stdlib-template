@@ -67,13 +67,28 @@ func (s *Service) UploadMany(r *http.Request) (map[string][]string, error) {
 }
 
 func (s *Service) UploadManyDisk(r *http.Request) (map[string][]string, error) {
-	m := map[string][]string{"paths": []string{""}}
+	m := map[string][]string{"paths": {""}}
+	var paths []string
+	fhs := multipart.GetFiles("files", r)
+	for i := range fhs {
+		fh := fhs[i]
+		f, err := fh.Open()
+		if err != nil {
+			return m, err
+		}
+		p, err := multipart.SaveFile(f, fh, "./uploads", uuidpkg.NewUUIDStr(), r)
+		if err != nil {
+			return m, err
+		}
+		paths = append(paths, p)
+	}
+	m["paths"] = paths
 	return m, nil
 }
 
-func (s *Service) UploadManyWithKeysDisk(keys, destFileNames []string, r *http.Request) (map[string][]string, error) {
+func (s *Service) UploadManyWithKeysDisk(r *http.Request) (map[string][]string, error) {
 	m := map[string][]string{"paths": {""}}
-	paths, err := s.handleFilesForKeys(keys, "./uploads", destFileNames, r)
+	paths, err := s.handleFilesForKeys([]string{"image0", "image1"}, "./uploads", []string{uuidpkg.NewUUIDStr(), uuidpkg.NewUUIDStr()}, r)
 	if err != nil {
 		return m, err
 	}

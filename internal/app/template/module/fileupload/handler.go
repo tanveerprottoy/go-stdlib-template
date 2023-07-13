@@ -6,7 +6,6 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/core"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/uuidpkg"
 )
 
 type Handler struct {
@@ -79,7 +78,7 @@ func (h *Handler) UploadManyWithKeysDisk(w http.ResponseWriter, r *http.Request)
 		response.RespondErrorAlt(http.StatusInternalServerError, "Parse error", w)
 		return
 	}
-	d, err := h.service.UploadManyWithKeysDisk([]string{"image0", "image1"}, []string{uuidpkg.NewUUIDStr(), uuidpkg.NewUUIDStr()}, r)
+	d, err := h.service.UploadManyWithKeysDisk(r)
 	if err != nil {
 		response.RespondErrorAlt(http.StatusInternalServerError, "an error", w)
 		return
