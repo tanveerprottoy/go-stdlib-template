@@ -28,7 +28,7 @@ type App struct {
 	UserModule       *user.Module
 	FileUploadModule *fileupload.Module
 	Validate         *validator.Validate
-	S3Client         *s3pkg.Client
+	ClientS3         *s3pkg.Client
 }
 
 func NewApp() *App {
@@ -46,8 +46,8 @@ func (a *App) initDir() {
 }
 
 func (a *App) initS3() {
-	a.S3Client = s3pkg.GetInstance()
-	a.S3Client.Init(s3.Options{
+	a.ClientS3 = s3pkg.GetInstance()
+	a.ClientS3.Init(s3.Options{
 		Region:      "us-west-2",
 		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(config.GetEnvValue("S3_ACCESS_KEY"), config.GetEnvValue("S3_SECRET_KEY"), "")),
 	}, nil)
@@ -61,7 +61,7 @@ func (a *App) initMiddlewares() {
 func (a *App) initModules() {
 	a.UserModule = user.NewModule(a.DBClient.DB, a.Validate)
 	a.AuthModule = auth.NewModule(a.UserModule.Service)
-	a.FileUploadModule = fileupload.NewModule(a.S3Client)
+	a.FileUploadModule = fileupload.NewModule(a.ClientS3.S3Client)
 }
 
 func (a *App) initModuleRouters() {

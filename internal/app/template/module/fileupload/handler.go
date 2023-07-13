@@ -23,16 +23,17 @@ func (h *Handler) parseMultipartForm(r *http.Request) error {
 }
 
 func (h *Handler) UploadOne(w http.ResponseWriter, r *http.Request) {
-	// reqMultipartParsed
-	/* err := multipart.ParseMultipartForm(r)
+	err := h.parseMultipartForm(r)
 	if err != nil {
 		response.RespondErrorAlt(http.StatusInternalServerError, "Parse error", w)
 		return
 	}
-	f, header, err := httppkg.GetFile(r, "file")
+	d, err := h.service.UploadOne(r)
 	if err != nil {
-		return paths, err
-	} */
+		response.RespondErrorAlt(http.StatusInternalServerError, "an error", w)
+		return
+	}
+	response.Respond(http.StatusOK, d, w)
 }
 
 func (h *Handler) UploadOneDisk(w http.ResponseWriter, r *http.Request) {

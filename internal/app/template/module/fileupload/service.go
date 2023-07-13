@@ -1,21 +1,24 @@
 package fileupload
 
 import (
+	"fmt"
 	"net/http"
 	"path/filepath"
 
+	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/s3pkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/uuidpkg"
 )
 
 type Service struct {
-	s3client *s3pkg.Client
+	s3Client *s3.Client
 }
 
-func NewService(s3client *s3pkg.Client) *Service {
+func NewService(s3Client *s3.Client) *Service {
 	s := new(Service)
-	s.s3client = s3client
+	s.s3Client = s3Client
 	return s
 }
 
@@ -46,8 +49,17 @@ func (s *Service) handleFilesForKeys(keys []string, rootDir string, destFileName
 	return paths, nil
 }
 
-func (s *Service) UploadOne(p []byte, w http.ResponseWriter, r *http.Request) (map[string]string, error) {
-	m := map[string]string{"u": ""}
+func (s *Service) UploadOne(r *http.Request) (map[string]string, error) {
+	m := map[string]string{"path": ""}
+	f, h, err := multipart.GetFormFile("file", r)
+	if err != nil {
+		return m, err
+	}
+	o, err := s3pkg.PutObject(config.GetEnvValue("BUCKET_NAME"), h.Filename, f, s.s3Client, r.Context())
+	if err != nil {
+		return m, err
+	}
+	fmt.Println(o)
 	return m, nil
 }
 
