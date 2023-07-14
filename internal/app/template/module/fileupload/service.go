@@ -59,7 +59,7 @@ func (s *Service) UploadOne(r *http.Request) (map[string]string, error) {
 	if err != nil {
 		return m, err
 	}
-	fmt.Println(o)
+	fmt.Println(*o)
 	return m, nil
 }
 

@@ -55,3 +55,13 @@ func GetObject(fileName string, file multipart.File, bucketName, objectKey strin
 		Key:    aws.String(objectKey),
 	})
 }
+
+// GetObject retrieve object from s3
+func BuildObjectURLPathStyle(fileName string, file multipart.File, bucketName, objectKey string, client *s3.Client, ctx context.Context) (*s3.GetObjectOutput, error) {
+	return client.GetObject(ctx, &s3.GetObjectInput{
+		Bucket: aws.String(bucketName),
+		Key:    aws.String(objectKey),
+	})
+}
+
+// https://<region>.amazonaws.com/<bucket-name>/<key>

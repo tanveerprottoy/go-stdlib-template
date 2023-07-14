@@ -25,12 +25,12 @@ func (h *Handler) parseMultipartForm(r *http.Request) error {
 func (h *Handler) UploadOne(w http.ResponseWriter, r *http.Request) {
 	err := h.parseMultipartForm(r)
 	if err != nil {
-		response.RespondErrorAlt(http.StatusInternalServerError, "Parse error", w)
+		response.RespondError(http.StatusInternalServerError, err, w)
 		return
 	}
 	d, err := h.service.UploadOne(r)
 	if err != nil {
-		response.RespondErrorAlt(http.StatusInternalServerError, "an error", w)
+		response.RespondError(http.StatusInternalServerError, err, w)
 		return
 	}
 	response.Respond(http.StatusOK, d, w)
@@ -56,7 +56,7 @@ func (h *Handler) UploadMany(w http.ResponseWriter, r *http.Request) {
 		response.RespondErrorAlt(http.StatusInternalServerError, "Parse error", w)
 		return
 	} */
-	response.Respond(http.StatusOK, map[string][]string{"filePaths": []string{""}}, w)
+	response.Respond(http.StatusOK, map[string][]string{"filePaths": {""}}, w)
 }
 
 func (h *Handler) UploadManyDisk(w http.ResponseWriter, r *http.Request) {

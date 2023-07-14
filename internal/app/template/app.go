@@ -1,12 +1,10 @@
 package template
 
 import (
-	"context"
-	"log"
 	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/config"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/go-playground/validator/v10"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/auth"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/fileupload"
@@ -49,8 +47,7 @@ func (a *App) initDir() {
 func (a *App) initS3() {
 	s3Region := configpkg.GetEnvValue("S3_REGION")
 	s3Endpoint := configpkg.GetEnvValue("S3_ENDPOINT")
-	bucketName := configpkg.GetEnvValue("BUCKET_NAME")
-	customResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
+	endpointResolverFunc := s3.EndpointResolverFunc(func(region string, options s3.EndpointResolverOptions) (aws.Endpoint, error) {
 		if s3Endpoint != "" {
 			return aws.Endpoint{
 				PartitionID:   "aws",
@@ -61,23 +58,16 @@ func (a *App) initS3() {
 		// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
 		return aws.Endpoint{}, &aws.EndpointNotFoundError{}
 	})
-	cfg, err := config.LoadDefaultConfig(context.TODO(),
-		config.WithRegion(s3Region),
-		config.WithEndpointResolver(customResolver),
-	)
-	if err != nil {
-		log.Fatalf("Cannot load the AWS configs: %s", err)
-	}
 	a.ClientS3 = s3pkg.GetInstance()
-	/* a.ClientS3.Init(s3.Options{
-		Region: config.GetEnvValue("S3_REGION"),
+	a.ClientS3.Init(s3.Options{
+		Region: configpkg.GetEnvValue("S3_REGION"),
 		// Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(config.GetEnvValue("S3_ACCESS_KEY"), config.GetEnvValue("S3_SECRET_KEY"), "")),
+		// EndpointResolver: endpointResolverFunc,
+		// UsePathStyle: true,
 	}, func(o *s3.Options) {
-		o.EndpointOptions = s3.EndpointResolver{
-			return s3.ResolveEndpoint()
-			Endpoint: config.GetEnvValue("S3_ENDPOINT"),
-		}
-	}) */
+		o.EndpointResolver = endpointResolverFunc
+		o.UsePathStyle = true
+	})
 }
 
 func (a *App) initMiddlewares() {
@@ -110,7 +100,7 @@ func (a *App) initComponents() {
 
 // Run app
 func (a *App) Run() {
-	err := http.ListenAndServe(":8080", a.router.Mux)
+	err := http.ListenAndServe(":"+configpkg.GetEnvValue("APP_PORT"), a.router.Mux)
 	if err != nil {
 		panic(err)
 	}
