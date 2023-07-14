@@ -2,23 +2,25 @@ package s3pkg
 
 import (
 	"context"
-	"mime/multipart"
+	"fmt"
 	"sync"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	v4 "github.com/aws/aws-sdk-go-v2/aws/signer/v4"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/aws/aws-sdk-go-v2/service/s3/types"
 )
 
 // CreateBucket creates a bucket
-func CreateBucket(bucketName, region string, client *s3.Client, ctx context.Context) (*s3.CreateBucketOutput, error) {
+// ex:
+//
+//	&s3.CreateBucketInput{
+//	 Bucket: aws.String(bucketName),
+//	 CreateBucketConfiguration: &types.CreateBucketConfiguration{
+//	 	LocationConstraint: types.BucketLocationConstraint(region),
+//	 },
+func CreateBucket(params *s3.CreateBucketInput, client *s3.Client, ctx context.Context) (*s3.CreateBucketOutput, error) {
 	// Create the S3 Bucket
-	return client.CreateBucket(ctx, &s3.CreateBucketInput{
-		Bucket: aws.String(bucketName),
-		CreateBucketConfiguration: &types.CreateBucketConfiguration{
-			LocationConstraint: types.BucketLocationConstraint(region),
-		},
-	})
+	return client.CreateBucket(ctx, params)
 }
 
 // GetBucket determines whether we have this bucket
@@ -28,40 +30,72 @@ func GetBucket(bucketName string, client *s3.Client, ctx context.Context) (*s3.H
 }
 
 // PutObject puts object to s3
-func PutObject(bucketName, fileName string, file multipart.File, client *s3.Client, ctx context.Context) (*s3.PutObjectOutput, error) {
-	return client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(bucketName),
-		Key:    aws.String(fileName),
-		Body:   file,
-	})
+//
+//	&s3.PutObjectInput{
+//	 	Bucket: aws.String(bucketName),
+//	 	Key:    aws.String(fileName),
+//	 	Body:   file,
+//	}
+func PutObject(params *s3.PutObjectInput, client *s3.Client, ctx context.Context) (*s3.PutObjectOutput, error) {
+	return client.PutObject(ctx, params)
 }
 
-// PutObject puts object to s3
-func PutObjectWG(bucketName, fileName string, file multipart.File, wg *sync.WaitGroup, client *s3.Client, ctx context.Context) (*s3.PutObjectOutput, error) {
+// PutObjectWG puts object to s3 and uses a waitgroup
+//
+//	&s3.PutObjectInput{
+//	 	Bucket: aws.String(bucketName),
+//	 	Key:    aws.String(fileName),
+//	 	Body:   file,
+//	}
+func PutObjectWG(params *s3.PutObjectInput, wg *sync.WaitGroup, client *s3.Client, ctx context.Context) (*s3.PutObjectOutput, error) {
 	defer func() {
 		wg.Done()
 	}()
-	return client.PutObject(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(bucketName),
-		Key:    aws.String(fileName),
-		Body:   file,
-	})
+	return client.PutObject(ctx, params)
 }
 
-// GetObject retrieve object from s3
-func GetObject(fileName string, file multipart.File, bucketName, objectKey string, client *s3.Client, ctx context.Context) (*s3.GetObjectOutput, error) {
-	return client.GetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(bucketName),
-		Key:    aws.String(objectKey),
-	})
+// PutObjectPresigned puts presigned object to s3
+//
+//	&s3.PutObjectInput{
+//	 	Bucket: aws.String(bucketName),
+//	 	Key:    aws.String(fileName),
+//	 	Body:   file,
+//	}
+func PutObjectPresigned(params *s3.PutObjectInput, client *s3.PresignClient, ctx context.Context) (*v4.PresignedHTTPRequest, error) {
+	return client.PresignPutObject(ctx, params)
 }
 
-// GetObject retrieve object from s3
-func BuildObjectURLPathStyle(fileName string, file multipart.File, bucketName, objectKey string, client *s3.Client, ctx context.Context) (*s3.GetObjectOutput, error) {
-	return client.GetObject(ctx, &s3.GetObjectInput{
-		Bucket: aws.String(bucketName),
-		Key:    aws.String(objectKey),
-	})
+// GetObject retrieves object from s3
+// ex:
+//
+//	&s3.GetObjectInput{
+//			Bucket: aws.String(bucketName),
+//			Key:    aws.String(objectKey),
+//	}
+func GetObject(params *s3.GetObjectInput, client *s3.Client, ctx context.Context) (*s3.GetObjectOutput, error) {
+	return client.GetObject(ctx, params)
 }
 
-// https://<region>.amazonaws.com/<bucket-name>/<key>
+// GetObjectPresigned retrieves signed url for object from s3
+// ex:
+//
+//	optFns: func(opts *s3.PresignOptions) {
+//				opts.Expires =   timepkg.Duration(6 * int64(time.Second))
+//			})
+func GetObjectPresigned(params *s3.GetObjectInput, optFns func(*s3.PresignOptions), client *s3.PresignClient, ctx context.Context) (*v4.PresignedHTTPRequest, error) {
+	return client.PresignGetObject(ctx, params, optFns)
+}
+
+// BuildObjectURL builds object url
+func BuildObjectURL(region, bucketName, objectKey string) string {
+	// https://s3.<region>.amazonaws.com/<bucket-name>/<key>
+	// https://bucket-name.s3.region-code.amazonaws.com/key-name
+	return fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", bucketName, region, objectKey)
+}
+
+// BuildObjectURLPathStyle builds object url in url path style
+func BuildObjectURLPathStyle(region, host, bucketName, objectKey string) string {
+	// https://<bucket-name>.s3<region>.amazonaws.com/<key>
+	// https://bucket-name.s3.region-code.amazonaws.com/key-name
+	return fmt.Sprintf("https://s3.%s.amazonaws.com/%s/%s", region, bucketName, objectKey)
+}
