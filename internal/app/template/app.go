@@ -1,11 +1,12 @@
 package template
 
 import (
+	"context"
+	"log"
 	"net/http"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/go-playground/validator/v10"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/auth"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/fileupload"
@@ -13,7 +14,7 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/middleware"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/router"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
+	configpkg "github.com/tanveerprottoy/stdlib-go-template/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/s3pkg"
@@ -46,11 +47,37 @@ func (a *App) initDir() {
 }
 
 func (a *App) initS3() {
+	s3Region := configpkg.GetEnvValue("S3_REGION")
+	s3Endpoint := configpkg.GetEnvValue("S3_ENDPOINT")
+	bucketName := configpkg.GetEnvValue("BUCKET_NAME")
+	customResolver := aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
+		if s3Endpoint != "" {
+			return aws.Endpoint{
+				PartitionID:   "aws",
+				URL:           s3Endpoint,
+				SigningRegion: s3Region,
+			}, nil
+		}
+		// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
+		return aws.Endpoint{}, &aws.EndpointNotFoundError{}
+	})
+	cfg, err := config.LoadDefaultConfig(context.TODO(),
+		config.WithRegion(s3Region),
+		config.WithEndpointResolver(customResolver),
+	)
+	if err != nil {
+		log.Fatalf("Cannot load the AWS configs: %s", err)
+	}
 	a.ClientS3 = s3pkg.GetInstance()
-	a.ClientS3.Init(s3.Options{
-		Region:      "us-west-2",
-		Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(config.GetEnvValue("S3_ACCESS_KEY"), config.GetEnvValue("S3_SECRET_KEY"), "")),
-	}, nil)
+	/* a.ClientS3.Init(s3.Options{
+		Region: config.GetEnvValue("S3_REGION"),
+		// Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(config.GetEnvValue("S3_ACCESS_KEY"), config.GetEnvValue("S3_SECRET_KEY"), "")),
+	}, func(o *s3.Options) {
+		o.EndpointOptions = s3.EndpointResolver{
+			return s3.ResolveEndpoint()
+			Endpoint: config.GetEnvValue("S3_ENDPOINT"),
+		}
+	}) */
 }
 
 func (a *App) initMiddlewares() {
