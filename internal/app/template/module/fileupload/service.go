@@ -4,21 +4,24 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
+	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/s3pkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/timepkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/uuidpkg"
 )
 
 type Service struct {
-	s3Client *s3.Client
+	clientsS3 *s3pkg.Clients
 }
 
-func NewService(s3Client *s3.Client) *Service {
+func NewService(clientsS3 *s3pkg.Clients) *Service {
 	s := new(Service)
-	s.s3Client = s3Client
+	s.clientsS3 = clientsS3
 	return s
 }
 
@@ -55,13 +58,44 @@ func (s *Service) UploadOne(r *http.Request) (map[string]string, error) {
 	if err != nil {
 		return m, err
 	}
-	o, err := s3pkg.PutObject(config.GetEnvValue("BUCKET_NAME"), h.Filename, f, s.s3Client, r.Context())
+	o, err := s3pkg.PutObject(&s3.PutObjectInput{
+		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
+		Key:    aws.String(h.Filename),
+		Body:   f,
+	}, s.clientsS3.S3Client, r.Context())
 	if err != nil {
 		return m, err
 	}
 	fmt.Println(o)
 	// fetch url
-	m["path"] = 
+	m["path"] = s3pkg.BuildObjectURLPathStyle(config.GetEnvValue("S3_REGION"), config.GetEnvValue("BUCKET_NAME"), h.Filename)
+	return m, nil
+}
+
+func (s *Service) UploadOnePresigned(r *http.Request) (map[string]string, error) {
+	m := map[string]string{"path": ""}
+	f, h, err := multipart.GetFormFile("file", r)
+	if err != nil {
+		return m, err
+	}
+	o, err := s3pkg.PutObjectPresigned(&s3.PutObjectInput{
+		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
+		Key:    aws.String(h.Filename),
+		Body:   f,
+	}, s.clientsS3.PresignClient, r.Context())
+	if err != nil {
+		return m, err
+	}
+	fmt.Println(o)
+	// fetch url
+	o, err = s3pkg.GetObjectPresigned(&s3.GetObjectInput{
+		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
+		Key:    aws.String(h.Filename),
+	}, s3.WithPresignExpires(timepkg.Duration(5*time.Minute)), s.clientsS3.PresignClient, r.Context())
+	if err != nil {
+		return m, err
+	}
+	m["path"] = o.URL
 	return m, nil
 }
 

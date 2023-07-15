@@ -27,7 +27,7 @@ type App struct {
 	UserModule       *user.Module
 	FileUploadModule *fileupload.Module
 	Validate         *validator.Validate
-	ClientS3         *s3pkg.Client
+	ClientsS3        *s3pkg.Clients
 }
 
 func NewApp() *App {
@@ -58,8 +58,8 @@ func (a *App) initS3() {
 		// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
 		return aws.Endpoint{}, &aws.EndpointNotFoundError{}
 	})
-	a.ClientS3 = s3pkg.GetInstance()
-	a.ClientS3.Init(s3.Options{
+	a.ClientsS3 = s3pkg.GetInstance()
+	a.ClientsS3.Init(s3.Options{
 		Region: configpkg.GetEnvValue("S3_REGION"),
 		// Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(config.GetEnvValue("S3_ACCESS_KEY"), config.GetEnvValue("S3_SECRET_KEY"), "")),
 		// EndpointResolver: endpointResolverFunc,
@@ -78,7 +78,7 @@ func (a *App) initMiddlewares() {
 func (a *App) initModules() {
 	a.UserModule = user.NewModule(a.DBClient.DB, a.Validate)
 	a.AuthModule = auth.NewModule(a.UserModule.Service)
-	a.FileUploadModule = fileupload.NewModule(a.ClientS3.S3Client)
+	a.FileUploadModule = fileupload.NewModule(a.ClientsS3)
 }
 
 func (a *App) initModuleRouters() {

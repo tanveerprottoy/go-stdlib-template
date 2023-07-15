@@ -30,6 +30,6 @@ func SecondMultiply(d time.Duration) time.Duration {
 	return time.Second * d
 }
 
-func Duration(d0, d1 time.Duration) time.Duration {
-	return time.Duration(d0 * d1)
+func Duration(d time.Duration) time.Duration {
+	return time.Duration(d)
 }

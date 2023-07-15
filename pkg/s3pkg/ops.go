@@ -94,7 +94,7 @@ func BuildObjectURL(region, bucketName, objectKey string) string {
 }
 
 // BuildObjectURLPathStyle builds object url in url path style
-func BuildObjectURLPathStyle(region, host, bucketName, objectKey string) string {
+func BuildObjectURLPathStyle(region, bucketName, objectKey string) string {
 	// https://<bucket-name>.s3<region>.amazonaws.com/<key>
 	// https://bucket-name.s3.region-code.amazonaws.com/key-name
 	return fmt.Sprintf("https://s3.%s.amazonaws.com/%s/%s", region, bucketName, objectKey)
