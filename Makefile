@@ -14,4 +14,5 @@ test-user:
 # specific tese function with package path
 # go test -run TestMultiply ./
 
+# go test -v <package> -run <TestFunction>
 # go test -v -cover --short -race  ./... -run ^TestError*
