@@ -27,7 +27,7 @@ func (s *ServiceRemote) Authorize(w http.ResponseWriter, r *http.Request) any {
 		response.RespondError(http.StatusForbidden, err, w)
 		return nil
 	}
-	u, err := httppkg.Request[dto.AuthUserDto](
+	u, err := httppkg.Request[dto.AuthUserDTO](
 		http.MethodPost,
 		fmt.Sprintf("%s%s", config.GetEnvValue("USER_SERVICE_BASE_URL"), constant.UserServiceAuthEndpoint),
 		r.Header,

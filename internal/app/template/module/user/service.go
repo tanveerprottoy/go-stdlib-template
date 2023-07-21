@@ -26,7 +26,7 @@ func (s *Service) ReadOneInternal(id string) (entity.User, error) {
 	return s.repository.ReadOne(id)
 }
 
-func (s *Service) Create(d *dto.CreateUpdateUserDto, ctx context.Context) (entity.User, *errorpkg.HTTPError) {
+func (s *Service) Create(d *dto.CreateUpdateUserDTO, ctx context.Context) (entity.User, *errorpkg.HTTPError) {
 	// convert dto to entity
 	b := entity.User{}
 	b.Name = d.Name
@@ -62,7 +62,7 @@ func (s *Service) ReadOne(id string, ctx context.Context) (entity.User, *errorpk
 	return b, nil
 }
 
-func (s *Service) Update(id string, d *dto.CreateUpdateUserDto, ctx context.Context) (entity.User, *errorpkg.HTTPError) {
+func (s *Service) Update(id string, d *dto.CreateUpdateUserDTO, ctx context.Context) (entity.User, *errorpkg.HTTPError) {
 	b, err := s.ReadOneInternal(id)
 	if err != nil {
 		return b, errorpkg.HandleDBError(err)
