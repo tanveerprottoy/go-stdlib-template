@@ -29,7 +29,7 @@ func NewHandler(s *Service, v *validator.Validate) *Handler {
 
 func (h *Handler) parseValidateRequestBody(r *http.Request) (dto.CreateUpdateUserDTO, error) {
 	var d dto.CreateUpdateUserDTO
-	err := jsonpkg.Decode(r.Body, &d)
+	err := jsonpkg.Decode(d, r.Body)
 	if err != nil {
 		return d, err
 	}
