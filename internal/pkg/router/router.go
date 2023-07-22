@@ -1,9 +1,10 @@
 package router
 
 import (
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/middleware"
+	middlewarepkg "github.com/tanveerprottoy/stdlib-go-template/pkg/middleware"
 
 	"github.com/go-chi/chi"
+	"github.com/go-chi/chi/middleware"
 )
 
 // Router struct
@@ -20,8 +21,10 @@ func NewRouter() *Router {
 
 func (r *Router) registerGlobalMiddlewares() {
 	r.Mux.Use(
-		middleware.JSONContentTypeMiddleWare,
-		middleware.CORSEnableMiddleWare,
+		middleware.Logger,
+		// middleware.Recoverer,
+		middlewarepkg.JSONContentTypeMiddleWare,
+		middlewarepkg.CORSEnableMiddleWare,
 		/* cors.Handler(cors.Options{
 			// AllowedOrigins:   []string{"https://foo.com"}, // Use this to allow specific origin hosts
 			AllowedOrigins: []string{"https://*", "http://*"},
