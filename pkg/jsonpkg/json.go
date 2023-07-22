@@ -13,10 +13,10 @@ func Unmarshal(d []byte, v any) error {
 	return json.Unmarshal(d, &v)
 }
 
-func Encode(w io.Writer, v any) error {
-	return json.NewEncoder(w).Encode(&v)
+func Encode(v any, w io.Writer) error {
+	return json.NewEncoder(w).Encode(v)
 }
 
-func Decode(r io.Reader, v any) error {
+func Decode(v any, r io.Reader) error {
 	return json.NewDecoder(r).Decode(&v)
 }

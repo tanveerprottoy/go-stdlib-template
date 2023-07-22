@@ -24,7 +24,7 @@ func BytesToType[T any](b []byte) (*T, error) {
 
 func BodyToType[T any](b io.ReadCloser) (*T, error) {
 	var out T
-	err := jsonpkg.Decode(b, &out)
+	err := jsonpkg.Decode(out, b)
 	if err != nil {
 		return nil, err
 	}
