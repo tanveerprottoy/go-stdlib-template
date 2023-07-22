@@ -5,6 +5,7 @@ import (
 	"errors"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/jwtpkg"
@@ -27,6 +28,13 @@ func CORSEnableMiddleWare(next http.Handler) http.Handler {
 		w.Header().Set("Access-Control-Allow-Headers", "Accept, Authorization, Content-Type, X-CSRF-Token")
 		next.ServeHTTP(w, r)
 	})
+}
+
+// TimeoutHandler is a middleware to add http.TimeoutHandler.
+func TimeoutHandler(timeout time.Duration) func(next http.Handler) http.Handler {
+    return func(next http.Handler) http.Handler {
+        return http.TimeoutHandler(next, timeout, "Timeout.")
+    }
 }
 
 // JWTMiddleWare checks auth of the request
