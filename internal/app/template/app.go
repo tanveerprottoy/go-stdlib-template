@@ -1,7 +1,12 @@
 package template
 
 import (
+	"context"
+	"log"
 	"net/http"
+	"os"
+	"os/signal"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -20,6 +25,8 @@ import (
 
 // App struct
 type App struct {
+	Server           *http.Server
+	idleConnsClosed  chan struct{}
 	DBClient         *sqlxpkg.Client
 	router           *router.Router
 	Middlewares      []any
@@ -96,10 +103,61 @@ func (a *App) initComponents() {
 	a.initModules()
 	a.initMiddlewares()
 	a.initModuleRouters()
+	a.initServer()
+}
+
+func (a *App) initServer() {
+	a.Server = &http.Server{
+		Addr:    ":" + configpkg.GetEnvValue("APP_PORT"),
+		Handler: a.router.Mux,
+	}
+	// code to support graceful shutdown
+	a.idleConnsClosed = make(chan struct{})
+	go func() {
+		sigint := make(chan os.Signal, 1)
+		signal.Notify(sigint, os.Interrupt)
+		<-sigint
+
+		// We received an interrupt signal, shut down.
+		if err := a.Server.Shutdown(context.Background()); err != nil {
+			// Error from closing listeners, or context timeout:
+			log.Printf("HTTP server Shutdown: %v", err)
+		}
+		close(a.idleConnsClosed)
+	}()
+}
+
+func (a *App) StopServer(ctx context.Context) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
+	if err := a.Server.Shutdown(ctx); err != nil {
+		panic(err)
+	} else {
+		log.Println("application shutdowned")
+	}
 }
 
 // Run app
 func (a *App) Run() {
+	if err := a.Server.ListenAndServe(); err != http.ErrServerClosed {
+		// Error starting or closing listener:
+		log.Fatalf("HTTP server ListenAndServe: %v", err)
+	}
+	<-a.idleConnsClosed
+}
+
+// Run app with TLS
+func (a *App) RunTLS() {
+	if err := a.Server.ListenAndServeTLS("cert.crt", "key.key"); err != http.ErrServerClosed {
+		// Error starting or closing listener:
+		log.Fatalf("HTTPS server ListenAndServe: %v", err)
+	}
+	<-a.idleConnsClosed
+}
+
+// Run app
+func (a *App) RunListenAndServe() {
 	err := http.ListenAndServe(":"+configpkg.GetEnvValue("APP_PORT"), a.router.Mux)
 	if err != nil {
 		panic(err)
@@ -107,7 +165,7 @@ func (a *App) Run() {
 }
 
 // Run app
-func (a *App) RunTLS() {
+func (a *App) RunListenAndServeTLS() {
 	err := http.ListenAndServeTLS(":443", "cert.crt", "key.key", a.router.Mux)
 	if err != nil {
 		panic(err)
