@@ -2,7 +2,7 @@ package user
 
 import (
 	"github.com/jmoiron/sqlx"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user/entity"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/entity"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
 )
 

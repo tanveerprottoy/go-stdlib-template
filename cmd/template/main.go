@@ -1,6 +1,6 @@
 package main
 
-import "github.com/tanveerprottoy/stdlib-go-template/internal/app/template"
+import "github.com/tanveerprottoy/stdlib-go-template/internal/template"
 
 func main() {
 	a := template.NewApp()

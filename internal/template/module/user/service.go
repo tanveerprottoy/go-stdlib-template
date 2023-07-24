@@ -4,9 +4,9 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user/dto"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user/entity"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/dto"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/entity"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/timepkg"

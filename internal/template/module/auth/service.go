@@ -3,8 +3,8 @@ package auth
 import (
 	"net/http"
 
-	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/user/entity"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/entity"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/jwtpkg"
 )

@@ -1,7 +1,7 @@
 package router
 
 import (
-	"github.com/tanveerprottoy/stdlib-go-template/internal/app/template/module/fileupload"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 
 	"github.com/go-chi/chi"
