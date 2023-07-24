@@ -117,7 +117,6 @@ func (a *App) initServer() {
 		sigint := make(chan os.Signal, 1)
 		signal.Notify(sigint, os.Interrupt)
 		<-sigint
-
 		// We received an interrupt signal, shut down.
 		if err := a.Server.Shutdown(context.Background()); err != nil {
 			// Error from closing listeners, or context timeout:
@@ -127,14 +126,14 @@ func (a *App) initServer() {
 	}()
 }
 
-func (a *App) StopServer(ctx context.Context) {
+func (a *App) ShutdownServer(ctx context.Context) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
-
 	if err := a.Server.Shutdown(ctx); err != nil {
 		panic(err)
 	} else {
 		log.Println("application shutdowned")
+		// add code
 	}
 }
 
@@ -145,6 +144,7 @@ func (a *App) Run() {
 		log.Fatalf("HTTP server ListenAndServe: %v", err)
 	}
 	<-a.idleConnsClosed
+	log.Println("shutdown")
 }
 
 // Run app with TLS
