@@ -11,7 +11,7 @@ import (
 func RegisterUserRoutes(router *Router, version string, module *user.Module, authMiddleWare *middleware.AuthMiddleware) {
 	router.Mux.Group(
 		func(r chi.Router) {
-			r.Use(authMiddleWare.AuthUser)
+			// r.Use(authMiddleWare.AuthUser)
 			r.Route(
 				constant.ApiPattern+version+constant.UsersPattern,
 				func(r chi.Router) {

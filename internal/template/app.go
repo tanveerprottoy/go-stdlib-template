@@ -21,6 +21,7 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/s3pkg"
+	validatorpkg "github.com/tanveerprottoy/stdlib-go-template/pkg/validator"
 )
 
 // App struct
@@ -82,6 +83,11 @@ func (a *App) initMiddlewares() {
 	a.Middlewares = append(a.Middlewares, authMiddleWare)
 }
 
+func (a *App) initValidators() {
+	a.Validate = validator.New()
+	_ = a.Validate.RegisterValidation("notempty", validatorpkg.NotEmpty)
+}
+
 func (a *App) initModules() {
 	a.UserModule = user.NewModule(a.DBClient.DB, a.Validate)
 	a.AuthModule = auth.NewModule(a.UserModule.Service)
@@ -100,6 +106,7 @@ func (a *App) initComponents() {
 	a.initDir()
 	a.router = router.NewRouter()
 	a.initS3()
+	a.initValidators()
 	a.initModules()
 	a.initMiddlewares()
 	a.initModuleRouters()

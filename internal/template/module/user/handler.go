@@ -11,6 +11,7 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
+	validatorpkg "github.com/tanveerprottoy/stdlib-go-template/pkg/validator"
 )
 
 // Hanlder is responsible for extracting data
@@ -45,7 +46,13 @@ func (h *Handler) parseValidateRequestBody(r *http.Request) (dto.CreateUpdateUse
 }
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	d, err := h.parseValidateRequestBody(r)
+	// d, err := h.parseValidateRequestBody(r)
+	var d dto.CreateUpdateUserDTO
+	d, err, vErrs := validatorpkg.ParseValidateRequestBody[dto.CreateUpdateUserDTO](r.Body, d, h.validate)
+	if vErrs != nil {
+		response.RespondError(http.StatusBadRequest, vErrs, w)
+		return
+	}
 	if err != nil {
 		response.RespondError(http.StatusBadRequest, err, w)
 		return

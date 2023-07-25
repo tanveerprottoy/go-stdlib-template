@@ -27,12 +27,12 @@ func Respond(code int, payload any, writer http.ResponseWriter) {
 	writeResponse(writer, res)
 }
 
-func RespondError(code int, err error, writer http.ResponseWriter) {
-	res, err := json.Marshal(map[string]string{"error": err.Error()})
+func RespondError(code int, errs any, writer http.ResponseWriter) {
+	res, errs := json.Marshal(map[string]any{"errors": errs})
 	writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 	writer.WriteHeader(code)
-	if err != nil {
-		writeResponse(writer, []byte(err.Error()))
+	if errs != nil {
+		// log failed to marshal
 		return
 	}
 	writeResponse(writer, res)
