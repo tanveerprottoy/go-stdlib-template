@@ -104,6 +104,7 @@ func (a *App) initComponents() {
 	a.initMiddlewares()
 	a.initModuleRouters()
 	a.initServer()
+	a.initGracefulShutdown()
 }
 
 func (a *App) initServer() {
@@ -111,13 +112,18 @@ func (a *App) initServer() {
 		Addr:    ":" + configpkg.GetEnvValue("APP_PORT"),
 		Handler: a.router.Mux,
 	}
+}
+
+func (a *App) initGracefulShutdown() {
 	// code to support graceful shutdown
 	a.idleConnsClosed = make(chan struct{})
 	go func() {
-		sigint := make(chan os.Signal, 1)
-		signal.Notify(sigint, os.Interrupt)
-		<-sigint
+		// this func listens for SIGINT and handles it
+		ch := make(chan os.Signal, 1)
+		signal.Notify(ch, os.Interrupt)
+		<-ch
 		// We received an interrupt signal, shut down.
+		log.Printf("We received an interrupt signal")
 		if err := a.Server.Shutdown(context.Background()); err != nil {
 			// Error from closing listeners, or context timeout:
 			log.Printf("HTTP server Shutdown: %v", err)
