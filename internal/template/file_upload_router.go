@@ -1,13 +1,14 @@
-package router
+package template
 
 import (
-	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/router"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload"
 
 	"github.com/go-chi/chi"
 )
 
-func RegisterFileUploadRoutes(router *Router, version string, module *fileupload.Module) {
+func RegisterFileUploadRoutes(router *router.Router, version string, module *fileupload.Module) {
 	router.Mux.Route(
 		constant.ApiPattern+version+constant.FilesPattern,
 		func(r chi.Router) {

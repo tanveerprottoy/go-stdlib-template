@@ -44,7 +44,11 @@ func (c *Client) init() {
 	}
 	log.Println("Successfully connected!")
 	// create table if not exists
-	_, err = c.DB.Exec("CREATE TABLE IF NOT EXISTS books (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), title VARCHAR NOT NULL, author VARCHAR NOT NULL, publication_year INT, created_at BIGINT, updated_at BIGINT)")
+	_, err = c.DB.Exec("CREATE TABLE IF NOT EXISTS users (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), name VARCHAR NOT NULL, created_at BIGINT, updated_at BIGINT)")
+	if err != nil {
+		panic(err)
+	}
+	_, err = c.DB.Exec("CREATE TABLE IF NOT EXISTS contents (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), name VARCHAR NOT NULL, created_at TIMESTAMP, updated_at BIGINT)")
 	if err != nil {
 		panic(err)
 	}

@@ -11,24 +11,27 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonpkg"
 )
 
-func ParseValidateRequestBody[T any](reader io.Reader, typ T, validate *validator.Validate) (T, error, []errorpkg.ValidationError) {
-	var vErrs []errorpkg.ValidationError
-	err := jsonpkg.Decode(typ, reader)
+// ParseValidateRequestBody parses and validates the request body
+// The caller must pass the address for the v any param, ex: &v
+func ParseValidateRequestBody(readCloser io.ReadCloser, v any, validate *validator.Validate) ([]errorpkg.ValidationError, error) {
+	defer readCloser.Close()
+	var validationErrs []errorpkg.ValidationError
+	err := jsonpkg.Decode(readCloser, v)
 	if err != nil {
-		return typ, err, nil
+		return nil, err
 	}
 	// validate request body
-	err = validate.Struct(typ)
+	err = validate.Struct(v)
 	if err != nil {
 		// Struct is invalid
 		var v errorpkg.ValidationError
 		for _, err := range err.(validator.ValidationErrors) {
 			fmt.Println(err.Field(), err.Tag())
 			v.Message = err.Field() + " " + err.Tag()
-			vErrs = append(vErrs, v)
+			validationErrs = append(validationErrs, v)
 		}
 	}
-	return typ, err, vErrs
+	return validationErrs, err
 }
 
 func NotEmpty(fl validator.FieldLevel) bool {

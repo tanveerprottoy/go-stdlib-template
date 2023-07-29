@@ -15,6 +15,7 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/middleware"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/router"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user"
 	configpkg "github.com/tanveerprottoy/stdlib-go-template/pkg/config"
@@ -33,6 +34,7 @@ type App struct {
 	Middlewares      []any
 	AuthModule       *auth.Module
 	UserModule       *user.Module
+	ContentModule    *content.Module
 	FileUploadModule *fileupload.Module
 	Validate         *validator.Validate
 	ClientsS3        *s3pkg.Clients
@@ -90,14 +92,16 @@ func (a *App) initValidators() {
 
 func (a *App) initModules() {
 	a.UserModule = user.NewModule(a.DBClient.DB, a.Validate)
+	a.ContentModule = content.NewModule(a.DBClient.DB, a.Validate)
 	a.AuthModule = auth.NewModule(a.UserModule.Service)
 	a.FileUploadModule = fileupload.NewModule(a.ClientsS3)
 }
 
 func (a *App) initModuleRouters() {
 	m := a.Middlewares[0].(*middleware.AuthMiddleware)
-	router.RegisterUserRoutes(a.router, constant.V1, a.UserModule, m)
-	router.RegisterFileUploadRoutes(a.router, constant.V1, a.FileUploadModule)
+	RegisterUserRoutes(a.router, constant.V1, a.UserModule, m)
+	RegisterContentRoutes(a.router, constant.V1, a.ContentModule, m)
+	RegisterFileUploadRoutes(a.router, constant.V1, a.FileUploadModule)
 }
 
 // Init app

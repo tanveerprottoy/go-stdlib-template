@@ -22,9 +22,9 @@ func BytesToType[T any](b []byte) (*T, error) {
 	return &out, err
 }
 
-func BodyToType[T any](b io.ReadCloser) (*T, error) {
+func BodyToType[T any](r io.ReadCloser) (*T, error) {
 	var out T
-	err := jsonpkg.Decode(out, b)
+	err := jsonpkg.Decode(r, &out)
 	if err != nil {
 		return nil, err
 	}

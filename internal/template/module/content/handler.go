@@ -1,15 +1,13 @@
-package user
+package content
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/dto"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/adapter"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
 	validatorpkg "github.com/tanveerprottoy/stdlib-go-template/pkg/validator"
 )
@@ -28,27 +26,8 @@ func NewHandler(s *Service, v *validator.Validate) *Handler {
 	return h
 }
 
-func (h *Handler) parseValidateRequestBody(r *http.Request) (dto.CreateUpdateUserDTO, error) {
-	var d dto.CreateUpdateUserDTO
-	defer r.Body.Close()
-	err := jsonpkg.Decode(r.Body, &d)
-	if err != nil {
-		return d, err
-	}
-	// validate request body
-	err = h.validate.Struct(d)
-	if err != nil {
-		// Struct is invalid
-		for _, err := range err.(validator.ValidationErrors) {
-			fmt.Println(err.Field(), err.Tag())
-		}
-	}
-	return d, err
-}
-
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	// d, err := h.parseValidateRequestBody(r)
-	var d dto.CreateUpdateUserDTO
+	var d dto.CreateUpdateContentDTO
 	validationErrs, err := validatorpkg.ParseValidateRequestBody(r.Body, &d, h.validate)
 	if validationErrs != nil {
 		response.RespondError(http.StatusBadRequest, validationErrs, w)
@@ -58,8 +37,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		response.RespondError(http.StatusBadRequest, err, w)
 		return
 	}
-	ctx := r.Context()
-	e, httpErr := h.service.Create(&d, ctx)
+	e, httpErr := h.service.Create(&d, r.Context())
 	if httpErr != nil {
 		response.RespondError(httpErr.Code, httpErr.Err, w)
 		return
@@ -105,7 +83,12 @@ func (h *Handler) ReadOne(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	id := httppkg.GetURLParam(r, constant.KeyId)
-	d, err := h.parseValidateRequestBody(r)
+	var d dto.CreateUpdateContentDTO
+	validationErrs, err := validatorpkg.ParseValidateRequestBody(r.Body, &d, h.validate)
+	if validationErrs != nil {
+		response.RespondError(http.StatusBadRequest, validationErrs, w)
+		return
+	}
 	if err != nil {
 		response.RespondError(http.StatusBadRequest, err, w)
 		return
