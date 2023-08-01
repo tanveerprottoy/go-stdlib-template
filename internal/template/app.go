@@ -18,6 +18,7 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user"
+	modulerouter "github.com/tanveerprottoy/stdlib-go-template/internal/template/router"
 	configpkg "github.com/tanveerprottoy/stdlib-go-template/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
@@ -99,9 +100,9 @@ func (a *App) initModules() {
 
 func (a *App) initModuleRouters() {
 	m := a.Middlewares[0].(*middleware.AuthMiddleware)
-	RegisterUserRoutes(a.router, constant.V1, a.UserModule, m)
-	RegisterContentRoutes(a.router, constant.V1, a.ContentModule, m)
-	RegisterFileUploadRoutes(a.router, constant.V1, a.FileUploadModule)
+	modulerouter.RegisterUserRoutes(a.router, constant.V1, a.UserModule, m)
+	modulerouter.RegisterContentRoutes(a.router, constant.V1, a.ContentModule, m)
+	modulerouter.RegisterFileUploadRoutes(a.router, constant.V1, a.FileUploadModule)
 }
 
 // Init app

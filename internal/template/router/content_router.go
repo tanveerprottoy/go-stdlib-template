@@ -1,4 +1,4 @@
-package template
+package router
 
 import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
