@@ -123,9 +123,10 @@ func (s *Service) GetPresignedURLForOne(key string, ctx context.Context) (map[st
 	o, err := s3pkg.GetObjectPresigned(&s3.GetObjectInput{
 		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
 		Key:    aws.String(key),
-	}, func(opts *s3.PresignOptions) {
-		opts.Expires = timepkg.Duration(5 * time.Minute)
-	}, s.clientsS3.PresignClient, ctx)
+	}, s.clientsS3.PresignClient, ctx,
+		func(opts *s3.PresignOptions) {
+			opts.Expires = timepkg.Duration(5 * time.Minute)
+		})
 	if err != nil {
 		return m, err
 	}
@@ -138,7 +139,9 @@ func (s *Service) PutPresignedURLForOne(key string, ctx context.Context) (map[st
 	o, err := s3pkg.PutObjectPresigned(&s3.PutObjectInput{
 		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
 		Key:    aws.String(key),
-	}, s.clientsS3.PresignClient, ctx)
+	}, s.clientsS3.PresignClient, ctx, func(o *s3.PresignOptions) {
+		o.Expires = timepkg.Duration(2 * time.Minute)
+	})
 	if err != nil {
 		return m, err
 	}

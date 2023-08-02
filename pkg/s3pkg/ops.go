@@ -18,15 +18,15 @@ import (
 //	 CreateBucketConfiguration: &types.CreateBucketConfiguration{
 //	 	LocationConstraint: types.BucketLocationConstraint(region),
 //	 },
-func CreateBucket(params *s3.CreateBucketInput, client *s3.Client, ctx context.Context) (*s3.CreateBucketOutput, error) {
+func CreateBucket(params *s3.CreateBucketInput, client *s3.Client, ctx context.Context, optFns ...func(*s3.Options)) (*s3.CreateBucketOutput, error) {
 	// Create the S3 Bucket
-	return client.CreateBucket(ctx, params)
+	return client.CreateBucket(ctx, params, optFns...)
 }
 
 // GetBucket determines whether we have this bucket
-func GetBucket(bucketName string, client *s3.Client, ctx context.Context) (*s3.HeadBucketOutput, error) {
+func GetBucket(bucketName string, client *s3.Client, ctx context.Context, optFns ...func(*s3.Options)) (*s3.HeadBucketOutput, error) {
 	// Do we have this Bucket
-	return client.HeadBucket(ctx, &s3.HeadBucketInput{Bucket: aws.String(bucketName)})
+	return client.HeadBucket(ctx, &s3.HeadBucketInput{Bucket: aws.String(bucketName)}, optFns...)
 }
 
 // PutObject puts object to s3
@@ -36,8 +36,8 @@ func GetBucket(bucketName string, client *s3.Client, ctx context.Context) (*s3.H
 //	 	Key:    aws.String(fileName),
 //	 	Body:   file,
 //	}
-func PutObject(params *s3.PutObjectInput, client *s3.Client, ctx context.Context) (*s3.PutObjectOutput, error) {
-	return client.PutObject(ctx, params)
+func PutObject(params *s3.PutObjectInput, client *s3.Client, ctx context.Context, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
+	return client.PutObject(ctx, params, optFns...)
 }
 
 // PutObjectWG puts object to s3 and uses a waitgroup
@@ -47,11 +47,11 @@ func PutObject(params *s3.PutObjectInput, client *s3.Client, ctx context.Context
 //	 	Key:    aws.String(fileName),
 //	 	Body:   file,
 //	}
-func PutObjectWG(params *s3.PutObjectInput, wg *sync.WaitGroup, client *s3.Client, ctx context.Context) (*s3.PutObjectOutput, error) {
+func PutObjectWG(params *s3.PutObjectInput, wg *sync.WaitGroup, client *s3.Client, ctx context.Context, optFns ...func(*s3.Options)) (*s3.PutObjectOutput, error) {
 	defer func() {
 		wg.Done()
 	}()
-	return client.PutObject(ctx, params)
+	return client.PutObject(ctx, params, optFns...)
 }
 
 // PutObjectPresigned puts presigned object to s3
@@ -61,8 +61,8 @@ func PutObjectWG(params *s3.PutObjectInput, wg *sync.WaitGroup, client *s3.Clien
 //	 	Key:    aws.String(fileName),
 //	 	Body:   file,
 //	}
-func PutObjectPresigned(params *s3.PutObjectInput, client *s3.PresignClient, ctx context.Context) (*v4.PresignedHTTPRequest, error) {
-	return client.PresignPutObject(ctx, params)
+func PutObjectPresigned(params *s3.PutObjectInput, client *s3.PresignClient, ctx context.Context, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+	return client.PresignPutObject(ctx, params, optFns...)
 }
 
 // GetObject retrieves object from s3
@@ -72,8 +72,8 @@ func PutObjectPresigned(params *s3.PutObjectInput, client *s3.PresignClient, ctx
 //			Bucket: aws.String(bucketName),
 //			Key:    aws.String(objectKey),
 //	}
-func GetObject(params *s3.GetObjectInput, client *s3.Client, ctx context.Context) (*s3.GetObjectOutput, error) {
-	return client.GetObject(ctx, params)
+func GetObject(params *s3.GetObjectInput, client *s3.Client, ctx context.Context, optFns ...func(*s3.Options)) (*s3.GetObjectOutput, error) {
+	return client.GetObject(ctx, params, optFns...)
 }
 
 // GetObjectPresigned retrieves signed url for object from s3
@@ -82,8 +82,8 @@ func GetObject(params *s3.GetObjectInput, client *s3.Client, ctx context.Context
 //	optFns: func(opts *s3.PresignOptions) {
 //				opts.Expires =   timepkg.Duration(6 * int64(time.Second))
 //			})
-func GetObjectPresigned(params *s3.GetObjectInput, optFns func(*s3.PresignOptions), client *s3.PresignClient, ctx context.Context) (*v4.PresignedHTTPRequest, error) {
-	return client.PresignGetObject(ctx, params, optFns)
+func GetObjectPresigned(params *s3.GetObjectInput, client *s3.PresignClient, ctx context.Context, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
+	return client.PresignGetObject(ctx, params, optFns...)
 }
 
 // BuildObjectURL builds object url
