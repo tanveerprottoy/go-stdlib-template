@@ -3,7 +3,9 @@ package fileupload
 import (
 	"net/http"
 
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/core"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
 )
@@ -80,6 +82,22 @@ func (h *Handler) UploadManyWithKeysDisk(w http.ResponseWriter, r *http.Request)
 		return
 	}
 	d, err := h.service.UploadManyWithKeysDisk(r)
+	if err != nil {
+		response.RespondErrorAlt(http.StatusInternalServerError, "an error", w)
+		return
+	}
+	response.Respond(http.StatusOK, d, w)
+}
+
+func (h *Handler) PutPresignedURLForOne(w http.ResponseWriter, r *http.Request) {
+	var v dto.CreateUpdatePresignedDTO
+	defer r.Body.Close()
+	err := jsonpkg.Decode(r.Body, &v)
+	if err != nil {
+		response.RespondError(http.StatusInternalServerError, err, w)
+		return
+	}
+	d, err := h.service.PutPresignedURLForOne(v.Key, r.Context())
 	if err != nil {
 		response.RespondErrorAlt(http.StatusInternalServerError, "an error", w)
 		return

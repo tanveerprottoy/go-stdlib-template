@@ -12,7 +12,7 @@ import (
 func RegisterContentRoutes(router *router.Router, version string, module *content.Module, authMiddleWare *middleware.AuthMiddleware) {
 	router.Mux.Group(
 		func(r chi.Router) {
-			// r.Use(authMiddleWare.AuthUser)
+			r.Use(authMiddleWare.AuthUser)
 			r.Route(
 				constant.ApiPattern+version+constant.ContentsPattern,
 				func(r chi.Router) {

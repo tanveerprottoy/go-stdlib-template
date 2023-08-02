@@ -17,6 +17,7 @@ func RegisterFileUploadRoutes(router *router.Router, version string, module *fil
 			r.Post(constant.RootPattern+"upload-many", module.Handler.UploadMany)
 			r.Post(constant.RootPattern+"upload-many-disk", module.Handler.UploadManyDisk)
 			r.Post(constant.RootPattern+"upload-many-disk-keys", module.Handler.UploadManyWithKeysDisk)
+			r.Post(constant.RootPattern+"presigned-one", module.Handler.PutPresignedURLForOne)
 		},
 	)
 }
