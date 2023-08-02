@@ -79,6 +79,10 @@ func (a *App) initS3() {
 		o.EndpointResolver = endpointResolverFunc
 		o.UsePathStyle = true
 	})
+	// tmp create bucket
+	/* s3pkg.CreateBucket(&s3.CreateBucketInput{
+		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
+	}, a.ClientsS3.S3Client, context.Background()) */
 }
 
 func (a *App) initMiddlewares() {
@@ -116,7 +120,7 @@ func (a *App) initComponents() {
 	a.initMiddlewares()
 	a.initModuleRouters()
 	a.initServer()
-	a.initGracefulShutdown()
+	a.configureGracefulShutdown()
 }
 
 func (a *App) initServer() {
@@ -126,11 +130,12 @@ func (a *App) initServer() {
 	}
 }
 
-func (a *App) initGracefulShutdown() {
+func (a *App) configureGracefulShutdown() {
 	// code to support graceful shutdown
 	a.idleConnsClosed = make(chan struct{})
 	go func() {
-		// this func listens for SIGINT and handles it
+		// this func listens for SIGINT and initiates
+		// shutdown when SIGINT is received
 		ch := make(chan os.Signal, 1)
 		signal.Notify(ch, os.Interrupt)
 		<-ch

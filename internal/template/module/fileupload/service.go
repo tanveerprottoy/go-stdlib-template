@@ -61,7 +61,7 @@ func (s *Service) UploadOne(r *http.Request) (map[string]string, error) {
 	}
 	o, err := s3pkg.PutObject(&s3.PutObjectInput{
 		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
-		Key:    aws.String("/my-folder/" + h.Filename),
+		Key:    aws.String("my-folder/" + h.Filename),
 		Body:   f,
 	}, s.clientsS3.S3Client, r.Context())
 	if err != nil {
