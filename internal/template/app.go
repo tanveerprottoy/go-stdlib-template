@@ -41,6 +41,7 @@ type App struct {
 	ClientsS3        *s3pkg.Clients
 }
 
+// NewApp creates App
 func NewApp() *App {
 	a := new(App)
 	a.initComponents()
@@ -55,6 +56,7 @@ func (a *App) initDir() {
 	file.CreateDirIfNotExists("./uploads")
 }
 
+// initS3 initializes s3
 func (a *App) initS3() {
 	s3Region := configpkg.GetEnvValue("S3_REGION")
 	s3Endpoint := configpkg.GetEnvValue("S3_ENDPOINT")
@@ -109,20 +111,6 @@ func (a *App) initModuleRouters() {
 	modulerouter.RegisterFileUploadRoutes(a.router, constant.V1, a.FileUploadModule)
 }
 
-// Init app
-func (a *App) initComponents() {
-	a.initDB()
-	a.initDir()
-	a.router = router.NewRouter()
-	a.initS3()
-	a.initValidators()
-	a.initModules()
-	a.initMiddlewares()
-	a.initModuleRouters()
-	a.initServer()
-	a.configureGracefulShutdown()
-}
-
 func (a *App) initServer() {
 	a.Server = &http.Server{
 		Addr:    ":" + configpkg.GetEnvValue("APP_PORT"),
@@ -158,6 +146,20 @@ func (a *App) ShutdownServer(ctx context.Context) {
 		log.Println("application shutdowned")
 		// add code
 	}
+}
+
+// Init app
+func (a *App) initComponents() {
+	a.initDB()
+	a.initDir()
+	a.router = router.NewRouter()
+	a.initS3()
+	a.initValidators()
+	a.initModules()
+	a.initMiddlewares()
+	a.initModuleRouters()
+	a.initServer()
+	a.configureGracefulShutdown()
 }
 
 // Run app
