@@ -48,11 +48,13 @@ func NewApp() *App {
 	return a
 }
 
+// initDB initializes DB client
 func (a *App) initDB() {
 	a.DBClient = sqlxpkg.GetInstance()
 }
 
-func (a *App) initDir() {
+// // createDir creates uploads directory
+func (a *App) createDir() {
 	file.CreateDirIfNotExists("./uploads")
 }
 
@@ -87,16 +89,19 @@ func (a *App) initS3() {
 	}, a.ClientsS3.S3Client, context.Background()) */
 }
 
+// initMiddlewares initializes middlewares
 func (a *App) initMiddlewares() {
 	authMiddleWare := middleware.NewAuthMiddleware(a.AuthModule.Service)
 	a.Middlewares = append(a.Middlewares, authMiddleWare)
 }
 
+// initValidators initializes validators
 func (a *App) initValidators() {
 	a.Validate = validator.New()
 	_ = a.Validate.RegisterValidation("notempty", validatorpkg.NotEmpty)
 }
 
+// initModules initializes application modules
 func (a *App) initModules() {
 	a.UserModule = user.NewModule(a.DBClient.DB, a.Validate)
 	a.ContentModule = content.NewModule(a.DBClient.DB, a.Validate)
@@ -104,6 +109,7 @@ func (a *App) initModules() {
 	a.FileUploadModule = fileupload.NewModule(a.ClientsS3)
 }
 
+// initModuleRouters module routers and routes
 func (a *App) initModuleRouters() {
 	m := a.Middlewares[0].(*middleware.AuthMiddleware)
 	modulerouter.RegisterUserRoutes(a.router, constant.V1, a.UserModule, m)
@@ -111,6 +117,7 @@ func (a *App) initModuleRouters() {
 	modulerouter.RegisterFileUploadRoutes(a.router, constant.V1, a.FileUploadModule)
 }
 
+// initServer initializes the server
 func (a *App) initServer() {
 	a.Server = &http.Server{
 		Addr:    ":" + configpkg.GetEnvValue("APP_PORT"),
@@ -118,6 +125,7 @@ func (a *App) initServer() {
 	}
 }
 
+// configureGracefulShutdown configures graceful shutdown
 func (a *App) configureGracefulShutdown() {
 	// code to support graceful shutdown
 	a.idleConnsClosed = make(chan struct{})
@@ -137,6 +145,7 @@ func (a *App) configureGracefulShutdown() {
 	}()
 }
 
+// ShutdownServer shuts down the server
 func (a *App) ShutdownServer(ctx context.Context) {
 	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
 	defer cancel()
@@ -148,10 +157,10 @@ func (a *App) ShutdownServer(ctx context.Context) {
 	}
 }
 
-// Init app
+// initComponents initializes application components
 func (a *App) initComponents() {
 	a.initDB()
-	a.initDir()
+	a.createDir()
 	a.router = router.NewRouter()
 	a.initS3()
 	a.initValidators()
@@ -162,7 +171,7 @@ func (a *App) initComponents() {
 	a.configureGracefulShutdown()
 }
 
-// Run app
+// Run runs the server
 func (a *App) Run() {
 	if err := a.Server.ListenAndServe(); err != http.ErrServerClosed {
 		// Error starting or closing listener:
@@ -172,7 +181,7 @@ func (a *App) Run() {
 	log.Println("shutdown")
 }
 
-// Run app with TLS
+// RunTLS runs the server with TLS
 func (a *App) RunTLS() {
 	if err := a.Server.ListenAndServeTLS("cert.crt", "key.key"); err != http.ErrServerClosed {
 		// Error starting or closing listener:
@@ -181,7 +190,7 @@ func (a *App) RunTLS() {
 	<-a.idleConnsClosed
 }
 
-// Run app
+// RunListenAndServe runs the server
 func (a *App) RunListenAndServe() {
 	err := http.ListenAndServe(":"+configpkg.GetEnvValue("APP_PORT"), a.router.Mux)
 	if err != nil {
@@ -189,7 +198,7 @@ func (a *App) RunListenAndServe() {
 	}
 }
 
-// Run app
+// RunListenAndServeTLS runs the server with TLS
 func (a *App) RunListenAndServeTLS() {
 	err := http.ListenAndServeTLS(":443", "cert.crt", "key.key", a.router.Mux)
 	if err != nil {
