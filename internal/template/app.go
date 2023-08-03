@@ -109,7 +109,7 @@ func (a *App) initModules() {
 	a.FileUploadModule = fileupload.NewModule(a.ClientsS3)
 }
 
-// initModuleRouters module routers and routes
+// initModuleRouters initializes module routers and routes
 func (a *App) initModuleRouters() {
 	m := a.Middlewares[0].(*middleware.AuthMiddleware)
 	modulerouter.RegisterUserRoutes(a.router, constant.V1, a.UserModule, m)
