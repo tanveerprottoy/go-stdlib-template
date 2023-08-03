@@ -59,11 +59,15 @@ func (s *Service) UploadOne(r *http.Request) (map[string]string, error) {
 	if err != nil {
 		return m, err
 	}
-	o, err := s3pkg.PutObject(&s3.PutObjectInput{
-		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
-		Key:    aws.String("my-folder/" + h.Filename),
-		Body:   f,
-	}, s.clientsS3.S3Client, r.Context())
+	o, err := s3pkg.PutObject(
+		&s3.PutObjectInput{
+			Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
+			Key:    aws.String("my-folder/" + h.Filename),
+			Body:   f,
+		},
+		s.clientsS3.S3Client,
+		r.Context(),
+	)
 	if err != nil {
 		return m, err
 	}
@@ -120,13 +124,17 @@ func (s *Service) UploadManyWithKeysDisk(r *http.Request) (map[string][]string, 
 
 func (s *Service) GetPresignedURLForOne(key string, ctx context.Context) (map[string]string, error) {
 	m := map[string]string{"signedUrl": ""}
-	o, err := s3pkg.GetObjectPresigned(&s3.GetObjectInput{
-		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
-		Key:    aws.String(key),
-	}, s.clientsS3.PresignClient, ctx,
+	o, err := s3pkg.GetObjectPresigned(
+		&s3.GetObjectInput{
+			Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
+			Key:    aws.String(key),
+		},
+		s.clientsS3.PresignClient,
+		ctx,
 		func(opts *s3.PresignOptions) {
 			opts.Expires = timepkg.Duration(5 * time.Minute)
-		})
+		},
+	)
 	if err != nil {
 		return m, err
 	}
