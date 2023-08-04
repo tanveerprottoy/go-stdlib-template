@@ -45,6 +45,8 @@ type App struct {
 func NewApp() *App {
 	a := new(App)
 	a.initComponents()
+	a.initServer()
+	a.configureGracefulShutdown()
 	return a
 }
 
@@ -167,8 +169,6 @@ func (a *App) initComponents() {
 	a.initModules()
 	a.initMiddlewares()
 	a.initModuleRouters()
-	a.initServer()
-	a.configureGracefulShutdown()
 }
 
 // Run runs the server
