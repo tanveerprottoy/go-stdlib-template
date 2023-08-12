@@ -4,23 +4,23 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
 )
 
-type AuthMiddleware struct {
+type Auth struct {
 	Service *auth.Service
 }
 
-func NewAuthMiddleware(s *auth.Service) *AuthMiddleware {
-	m := new(AuthMiddleware)
+func NewAuth(s *auth.Service) *Auth {
+	m := new(Auth)
 	m.Service = s
 	return m
 }
 
 // AuthUserMiddleWare auth user
-func (m *AuthMiddleware) AuthUser(next http.Handler) http.Handler {
+func (m *Auth) AuthUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		e, err := m.Service.Authorize(r)
 		if err != nil {

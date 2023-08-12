@@ -93,7 +93,7 @@ func (a *App) initS3() {
 
 // initMiddlewares initializes middlewares
 func (a *App) initMiddlewares() {
-	authMiddleWare := middleware.NewAuthMiddleware(a.AuthModule.Service)
+	authMiddleWare := middleware.NewAuth(a.AuthModule.Service)
 	a.Middlewares = append(a.Middlewares, authMiddleWare)
 }
 
@@ -113,7 +113,7 @@ func (a *App) initModules() {
 
 // initModuleRouters initializes module routers and routes
 func (a *App) initModuleRouters() {
-	m := a.Middlewares[0].(*middleware.AuthMiddleware)
+	m := a.Middlewares[0].(*middleware.Auth)
 	modulerouter.RegisterUserRoutes(a.router, constant.V1, a.UserModule, m)
 	modulerouter.RegisterContentRoutes(a.router, constant.V1, a.ContentModule, m)
 	modulerouter.RegisterFileUploadRoutes(a.router, constant.V1, a.FileUploadModule)
