@@ -1,0 +1,9 @@
+{
+    "user.POST": {
+        "name": "user.create",
+        "roles": [
+            "admin",
+            "user"
+        ]
+    }
+}
