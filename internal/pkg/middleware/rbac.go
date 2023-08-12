@@ -7,7 +7,7 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth"
 )
 
-// RBAC Role Based Access Control
+// RBAC Role Based Access Control middleware
 type RBAC struct {
 	Service *auth.Service
 }
