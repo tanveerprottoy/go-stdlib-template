@@ -9,7 +9,6 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/rbac"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth"
 
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
 )
 
@@ -38,14 +37,14 @@ func (r *RBAC) AuthRole(next http.Handler) http.Handler {
 		d := rbac.GetRBAC(request.URL.Path, request.Method)
 		if d == nil {
 			// could not resolve access control stop the request
-			response.RespondError(http.StatusForbidden, errorpkg.NewError("error"), writer)
+			response.RespondError(http.StatusForbidden, constant.Error, constant.Unauthorized, writer)
 			return
 		}
 		d = d.(rbac.RBACModel)
 		fmt.Println("GetRBAC: ", d)
 		e, err := r.Service.AuthorizeForRole(request)
 		if err != nil {
-			response.RespondError(http.StatusForbidden, err, writer)
+			response.RespondError(http.StatusForbidden, constant.Error, err.Error(), writer)
 			return
 		}
 		ctx := context.WithValue(request.Context(), constant.KeyAuthUser, e)

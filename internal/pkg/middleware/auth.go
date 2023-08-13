@@ -24,7 +24,7 @@ func (m *Auth) AuthUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		e, err := m.Service.Authorize(r)
 		if err != nil {
-			response.RespondError(http.StatusForbidden, err, w)
+			response.RespondError(http.StatusForbidden, constant.Error, err, w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), constant.KeyAuthUser, e)
