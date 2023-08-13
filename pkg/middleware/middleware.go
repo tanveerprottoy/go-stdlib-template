@@ -32,9 +32,9 @@ func CORSEnableMiddleWare(next http.Handler) http.Handler {
 
 // TimeoutHandler is a middleware to add http.TimeoutHandler.
 func TimeoutHandler(timeout time.Duration) func(next http.Handler) http.Handler {
-    return func(next http.Handler) http.Handler {
-        return http.TimeoutHandler(next, timeout, "Timeout.")
-    }
+	return func(next http.Handler) http.Handler {
+		return http.TimeoutHandler(next, timeout, "Timeout.")
+	}
 }
 
 // JWTMiddleWare checks auth of the request
@@ -43,19 +43,19 @@ func JWTMiddleWare(next http.Handler) http.Handler {
 		tokenHeader := r.Header.Get("Authorization")
 		if tokenHeader == "" {
 			// Token is missing
-			response.RespondError(http.StatusForbidden, errors.New("auth token is missing"), w)
+			response.RespondError(http.StatusForbidden, "error", errors.New("auth token is missing"), w)
 			return
 		}
 		split := strings.Split(tokenHeader, " ")
 		// token format is `Bearer {tokenBody}`
 		if len(split) != 2 {
-			response.RespondError(http.StatusForbidden, errors.New("token format is invalid"), w)
+			response.RespondError(http.StatusForbidden, "error", errors.New("token format is invalid"), w)
 			return
 		}
 		tokenBody := split[1]
 		claims, err := jwtpkg.VerifyToken(tokenBody)
 		if err != nil {
-			response.RespondError(http.StatusForbidden, err, w)
+			response.RespondError(http.StatusForbidden, "error", err, w)
 			return
 		}
 		ctx := context.WithValue(r.Context(), constant.ContextPayloadKey, claims.Payload)

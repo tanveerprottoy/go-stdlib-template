@@ -9,7 +9,7 @@ import (
 
 var (
 	// configs
-	Data map[string]any
+	Data map[string]RBACModel
 )
 
 func init() {
@@ -20,5 +20,15 @@ func init() {
 }
 
 func GetJsonValue(key string) any {
-	return Data[key]
+	v, ok := Data[key]
+	// If the key exists
+	if ok {
+		return v
+	}
+	return nil
+}
+
+type RBACModel struct {
+	Name  string   `json:"name"`
+	Roles []string `json:"roles"`
 }

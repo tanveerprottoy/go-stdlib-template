@@ -51,17 +51,17 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var d dto.CreateUpdateUserDTO
 	validationErrs, err := validatorpkg.ParseValidateRequestBody(r.Body, &d, h.validate)
 	if validationErrs != nil {
-		response.RespondError(http.StatusBadRequest, validationErrs, w)
+		response.RespondError(http.StatusBadRequest, constant.Errors, validationErrs, w)
 		return
 	}
 	if err != nil {
-		response.RespondError(http.StatusBadRequest, err, w)
+		response.RespondError(http.StatusBadRequest, constant.Error, err.Error(), w)
 		return
 	}
 	ctx := r.Context()
 	e, httpErr := h.service.Create(&d, ctx)
 	if httpErr != nil {
-		response.RespondError(httpErr.Code, httpErr.Err, w)
+		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
 		return
 	}
 	response.Respond(http.StatusCreated, e, w)
@@ -75,7 +75,7 @@ func (h *Handler) ReadMany(w http.ResponseWriter, r *http.Request) {
 	if limitStr != "" {
 		limit, err = adapter.StringToInt(limitStr)
 		if err != nil {
-			response.RespondError(http.StatusBadRequest, err, w)
+			response.RespondError(http.StatusBadRequest, constant.Error, err.Error(), w)
 			return
 		}
 	}
@@ -83,13 +83,14 @@ func (h *Handler) ReadMany(w http.ResponseWriter, r *http.Request) {
 	if pageStr != "" {
 		page, err = adapter.StringToInt(pageStr)
 		if err != nil {
-			response.RespondError(http.StatusBadRequest, err, w)
+			response.RespondError(http.StatusBadRequest, constant.Error, err.Error(), w)
 			return
 		}
 	}
 	e, httpErr := h.service.ReadMany(limit, page, nil)
 	if httpErr != nil {
-		response.RespondError(httpErr.Code, httpErr.Err, w)
+		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
+		return
 	}
 	response.Respond(http.StatusOK, e, w)
 }
@@ -98,7 +99,8 @@ func (h *Handler) ReadOne(w http.ResponseWriter, r *http.Request) {
 	id := httppkg.GetURLParam(r, constant.KeyId)
 	e, httpErr := h.service.ReadOne(id, nil)
 	if httpErr != nil {
-		response.RespondError(httpErr.Code, httpErr.Err, w)
+		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
+		return
 	}
 	response.Respond(http.StatusOK, e, w)
 }
@@ -107,12 +109,13 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	id := httppkg.GetURLParam(r, constant.KeyId)
 	d, err := h.parseValidateRequestBody(r)
 	if err != nil {
-		response.RespondError(http.StatusBadRequest, err, w)
+		response.RespondError(http.StatusBadRequest, constant.Errors, err, w)
 		return
 	}
 	e, httpErr := h.service.Update(id, &d, nil)
 	if httpErr != nil {
-		response.RespondError(httpErr.Code, httpErr.Err, w)
+		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
+		return
 	}
 	response.Respond(http.StatusOK, e, w)
 }
@@ -121,7 +124,12 @@ func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := httppkg.GetURLParam(r, constant.KeyId)
 	e, httpErr := h.service.Delete(id, nil)
 	if httpErr != nil {
-		response.RespondError(httpErr.Code, httpErr.Err, w)
+		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
+		return
 	}
 	response.Respond(http.StatusOK, e, w)
+}
+
+func (h *Handler) Public(w http.ResponseWriter, r *http.Request) {
+	response.Respond(http.StatusOK, map[string]string{"message": "public api"}, w)
 }

@@ -1,10 +1,16 @@
 package middleware
 
 import (
+	"context"
 	"fmt"
 	"net/http"
 
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/rbac"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth"
+
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
 )
 
 // RBAC Role Based Access Control middleware
@@ -29,13 +35,21 @@ func (r *RBAC) AuthRole(next http.Handler) http.Handler {
 		fmt.Println("AuthRole.URL.Fragment", request.URL.Fragment)
 		fmt.Println("AuthRole.URL.Path", request.URL.Path)
 		fmt.Println("AuthRole.URL.EscapedPath", request.URL.EscapedPath())
-		/* e, err := r.Service.Authorize(r)
-		if err != nil {
-			response.RespondError(http.StatusForbidden, err, w)
+		d := rbac.GetRBAC(request.URL.Path, request.Method)
+		if d == nil {
+			// could not resolve access control stop the request
+			response.RespondError(http.StatusForbidden, errorpkg.NewError("error"), writer)
 			return
 		}
-		ctx := context.WithValue(r.Context(), constant.KeyAuthUser, e)
-		req := r.WithContext(ctx) */
+		d = d.(rbac.RBACModel)
+		fmt.Println("GetRBAC: ", d)
+		e, err := r.Service.AuthorizeForRole(request)
+		if err != nil {
+			response.RespondError(http.StatusForbidden, err, writer)
+			return
+		}
+		ctx := context.WithValue(request.Context(), constant.KeyAuthUser, e)
+		_ = request.WithContext(ctx)
 		next.ServeHTTP(writer, request)
 	})
 }

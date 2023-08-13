@@ -13,14 +13,18 @@ const RowsAffected = "rowsAffected"
 // misc
 const InternalServerError = "internal server error"
 const BadRequest = "bad request"
-const Error = "error"
+const Unauthorized = "unauthorized"
 const OperationNotSuccess = "operation was not successful"
+
+const Error = "error"
+const Errors = "errors"
 
 // keys
 const KeyAuthUser = "AuthUser"
 const KeyId = "id"
 const KeyPage = "page"
 const KeyLimit = "limit"
+const KeyRBAC = "rbac"
 
 // remote userservice auth endpoint
 const UserServiceAuthEndpoint = "/api/v2/auth/get-user"

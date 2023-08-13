@@ -1,4 +1,18 @@
 {
+    "contents.GET": {
+        "name": "contents.getAll",
+        "roles": [
+            "admin",
+            "user"
+        ]
+    },
+    "contents.GET.p": {
+        "name": "contents.getOne",
+        "roles": [
+            "admin",
+            "user"
+        ]
+    },
     "user.POST": {
         "name": "user.create",
         "roles": [

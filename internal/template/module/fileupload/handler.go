@@ -3,6 +3,7 @@ package fileupload
 import (
 	"net/http"
 
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/core"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonpkg"
@@ -27,12 +28,12 @@ func (h *Handler) parseMultipartForm(r *http.Request) error {
 func (h *Handler) UploadOne(w http.ResponseWriter, r *http.Request) {
 	err := h.parseMultipartForm(r)
 	if err != nil {
-		response.RespondError(http.StatusInternalServerError, err, w)
+		response.RespondError(http.StatusInternalServerError, constant.Error, err.Error(), w)
 		return
 	}
 	d, err := h.service.UploadOne(r)
 	if err != nil {
-		response.RespondError(http.StatusInternalServerError, err, w)
+		response.RespondError(http.StatusInternalServerError, constant.Error, err.Error(), w)
 		return
 	}
 	response.Respond(http.StatusOK, d, w)
@@ -94,7 +95,7 @@ func (h *Handler) PutPresignedURLForOne(w http.ResponseWriter, r *http.Request) 
 	defer r.Body.Close()
 	err := jsonpkg.Decode(r.Body, &v)
 	if err != nil {
-		response.RespondError(http.StatusInternalServerError, err, w)
+		response.RespondError(http.StatusInternalServerError, constant.Error, err, w)
 		return
 	}
 	d, err := h.service.PutPresignedURLForOne(v.Key, r.Context())

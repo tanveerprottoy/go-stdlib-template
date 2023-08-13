@@ -30,6 +30,7 @@ func (s *Service) Create(d *dto.CreateUpdateUserDTO, ctx context.Context) (entit
 	// convert dto to entity
 	b := entity.User{}
 	b.Name = d.Name
+	b.Role = d.Role
 	n := timepkg.NowUnixMilli()
 	b.CreatedAt = n
 	b.UpdatedAt = n

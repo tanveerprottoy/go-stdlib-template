@@ -10,20 +10,21 @@ import (
 )
 
 func RegisterContentRoutes(router *router.Router, version string, module *content.Module, authMiddleWare *middleware.Auth, rbacMiddleWare *middleware.RBAC) {
-	router.Mux.Group(
+	router.Mux.Route(
+		constant.ApiPattern+version+constant.ContentsPattern,
 		func(r chi.Router) {
-			r.Use(rbacMiddleWare.AuthRole)
-			r.Use(authMiddleWare.AuthUser)
-			r.Route(
-				constant.ApiPattern+version+constant.ContentsPattern,
-				func(r chi.Router) {
-					r.Get(constant.RootPattern, module.Handler.ReadMany)
-					r.Get(constant.RootPattern+"{id}", module.Handler.ReadOne)
-					r.Post(constant.RootPattern, module.Handler.Create)
-					r.Patch(constant.RootPattern+"{id}", module.Handler.Update)
-					r.Delete(constant.RootPattern+"{id}", module.Handler.Delete)
-				},
-			)
+			// public routes
+			r.Get(constant.RootPattern+"public", module.Handler.Public)
+			r.Group(func(r chi.Router) {
+				// protected routes
+				/* r.Use(rbacMiddleWare.AuthRole)
+				r.Use(authMiddleWare.AuthUser) */
+				r.Get(constant.RootPattern, module.Handler.ReadMany)
+				r.Get(constant.RootPattern+"{id}", module.Handler.ReadOne)
+				r.Post(constant.RootPattern, module.Handler.Create)
+				r.Patch(constant.RootPattern+"{id}", module.Handler.Update)
+				r.Delete(constant.RootPattern+"{id}", module.Handler.Delete)
+			})
 		},
 	)
 }

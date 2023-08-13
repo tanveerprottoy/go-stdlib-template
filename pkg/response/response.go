@@ -20,15 +20,15 @@ func BuildData[T any](payload T) *Response[T] {
 func Respond(code int, payload any, writer http.ResponseWriter) {
 	res, err := json.Marshal(payload)
 	if err != nil {
-		RespondError(http.StatusInternalServerError, err, writer)
+		RespondError(http.StatusInternalServerError, "error", err, writer)
 		return
 	}
 	writer.WriteHeader(code)
 	writeResponse(writer, res)
 }
 
-func RespondError(code int, errs any, writer http.ResponseWriter) {
-	res, errs := json.Marshal(map[string]any{"errors": errs})
+func RespondError(code int, key string, errs any, writer http.ResponseWriter) {
+	res, errs := json.Marshal(map[string]any{key: errs})
 	writer.Header().Set("Content-Type", "application/json; charset=utf-8")
 	writer.WriteHeader(code)
 	if errs != nil {
@@ -52,7 +52,7 @@ func RespondAlt(code int, payload any, writer http.ResponseWriter) {
 	writer.WriteHeader(code)
 	err := json.NewEncoder(writer).Encode(payload)
 	if err != nil {
-		RespondError(http.StatusInternalServerError, err, writer)
+		RespondError(http.StatusInternalServerError, "error", err, writer)
 	}
 }
 

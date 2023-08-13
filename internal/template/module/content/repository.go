@@ -6,7 +6,7 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
 )
 
-const TableName = "users"
+const TableName = "contents"
 
 type Repository[T entity.Content] struct {
 	db *sqlx.DB

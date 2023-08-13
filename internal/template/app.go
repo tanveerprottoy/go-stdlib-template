@@ -141,7 +141,7 @@ func (a *App) configureGracefulShutdown() {
 		signal.Notify(ch, os.Interrupt)
 		<-ch
 		// We received an interrupt signal, shut down.
-		log.Printf("We received an interrupt signal")
+		log.Printf("Received an interrupt signal")
 		if err := a.Server.Shutdown(context.Background()); err != nil {
 			// Error from closing listeners, or context timeout:
 			log.Printf("HTTP server Shutdown: %v", err)
@@ -181,7 +181,7 @@ func (a *App) Run() {
 		log.Fatalf("HTTP server ListenAndServe: %v", err)
 	}
 	<-a.idleConnsClosed
-	log.Println("shutdown")
+	log.Println("Server shutdown")
 }
 
 // RunTLS runs the server with TLS

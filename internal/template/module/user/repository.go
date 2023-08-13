@@ -20,7 +20,7 @@ func NewRepository(db *sqlx.DB) *Repository[entity.User] {
 
 func (r *Repository[T]) Create(e *entity.User) error {
 	var lastId string
-	err := r.db.QueryRow("INSERT INTO "+TableName+" (name, created_at, updated_at) VALUES ($1, $2, $3) RETURNING id", e.Name, e.CreatedAt, e.UpdatedAt).Scan(&lastId)
+	err := r.db.QueryRow("INSERT INTO "+TableName+" (name, role, created_at, updated_at) VALUES ($1, $2, $3, $4) RETURNING id", e.Name, e.Role, e.CreatedAt, e.UpdatedAt).Scan(&lastId)
 	if err != nil {
 		return err
 	}

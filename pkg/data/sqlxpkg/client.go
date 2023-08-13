@@ -44,7 +44,7 @@ func (c *Client) init() {
 	}
 	log.Println("Successfully connected!")
 	// create table if not exists
-	_, err = c.DB.Exec("CREATE TABLE IF NOT EXISTS users (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), name VARCHAR NOT NULL, created_at BIGINT, updated_at BIGINT)")
+	_, err = c.DB.Exec("CREATE TABLE IF NOT EXISTS users (id uuid PRIMARY KEY DEFAULT gen_random_uuid(), name VARCHAR NOT NULL, role VARCHAR NOT NULL, created_at BIGINT, updated_at BIGINT)")
 	if err != nil {
 		panic(err)
 	}

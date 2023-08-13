@@ -24,7 +24,7 @@ func NewServiceRemote(c *httppkg.HTTPClient) *ServiceRemote {
 func (s *ServiceRemote) Authorize(w http.ResponseWriter, r *http.Request) any {
 	_, err := httppkg.ParseAuthToken(r)
 	if err != nil {
-		response.RespondError(http.StatusForbidden, err, w)
+		response.RespondError(http.StatusForbidden, constant.Error, err, w)
 		return nil
 	}
 	u, err := httppkg.Request[dto.AuthUserDTO](
@@ -35,7 +35,7 @@ func (s *ServiceRemote) Authorize(w http.ResponseWriter, r *http.Request) any {
 		s.HTTPClient,
 	)
 	if err != nil {
-		response.RespondError(http.StatusForbidden, err, w)
+		response.RespondError(http.StatusForbidden, constant.Error, err, w)
 		return nil
 	}
 	return u

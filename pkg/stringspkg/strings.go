@@ -3,7 +3,7 @@ package stringspkg
 import "strings"
 
 func Split(v, sep string) []string {
-	return strings.Split(v, " ")
+	return strings.Split(v, sep)
 }
 
 func Trim(v, cutset string) string {
