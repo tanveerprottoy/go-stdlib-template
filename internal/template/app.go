@@ -144,7 +144,7 @@ func (a *App) configureGracefulShutdown() {
 		log.Printf("Received an interrupt signal")
 		if err := a.Server.Shutdown(context.Background()); err != nil {
 			// Error from closing listeners, or context timeout:
-			log.Printf("HTTP server Shutdown: %v", err)
+			log.Printf("HTTP Server shutdown error: %v", err)
 		}
 		close(a.idleConnsClosed)
 	}()
@@ -157,7 +157,7 @@ func (a *App) ShutdownServer(ctx context.Context) {
 	if err := a.Server.Shutdown(ctx); err != nil {
 		panic(err)
 	} else {
-		log.Println("application shutdowned")
+		log.Println("Server shutdown")
 		// add code
 	}
 }
@@ -178,7 +178,7 @@ func (a *App) initComponents() {
 func (a *App) Run() {
 	if err := a.Server.ListenAndServe(); err != http.ErrServerClosed {
 		// Error starting or closing listener:
-		log.Fatalf("HTTP server ListenAndServe: %v", err)
+		log.Fatalf("HTTP Server ListenAndServe: %v", err)
 	}
 	<-a.idleConnsClosed
 	log.Println("Server shutdown")
