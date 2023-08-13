@@ -91,14 +91,6 @@ func (a *App) initS3() {
 	}, a.ClientsS3.S3Client, context.Background()) */
 }
 
-// initMiddlewares initializes middlewares
-func (a *App) initMiddlewares() {
-	am := middleware.NewAuth(a.AuthModule.Service)
-	rm := middleware.NewRBAC(a.AuthModule.Service)
-	a.Middlewares = append(a.Middlewares, am)
-	a.Middlewares = append(a.Middlewares, rm)
-}
-
 // initValidators initializes validators
 func (a *App) initValidators() {
 	a.Validate = validator.New()
@@ -111,6 +103,14 @@ func (a *App) initModules() {
 	a.ContentModule = content.NewModule(a.DBClient.DB, a.Validate)
 	a.AuthModule = auth.NewModule(a.UserModule.Service)
 	a.FileUploadModule = fileupload.NewModule(a.ClientsS3)
+}
+
+// initMiddlewares initializes middlewares
+func (a *App) initMiddlewares() {
+	am := middleware.NewAuth(a.AuthModule.Service)
+	rm := middleware.NewRBAC(a.AuthModule.Service)
+	a.Middlewares = append(a.Middlewares, am)
+	a.Middlewares = append(a.Middlewares, rm)
 }
 
 // initModuleRouters initializes module routers and routes
