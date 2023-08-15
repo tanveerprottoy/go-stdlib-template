@@ -1,7 +1,7 @@
 package router
 
 import (
-	middlewarepkg "github.com/tanveerprottoy/stdlib-go-template/pkg/middleware"
+	middlewarepkg "github.com/tanveerprottoy/stdlib-go-template/internal/pkg/middleware"
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
