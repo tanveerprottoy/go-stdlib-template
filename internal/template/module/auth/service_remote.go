@@ -5,10 +5,10 @@ import (
 	"net/http"
 
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
 )
 
 type ServiceRemote struct {

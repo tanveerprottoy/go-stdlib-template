@@ -3,8 +3,8 @@ package content
 import (
 	"github.com/go-playground/validator/v10"
 	"github.com/jmoiron/sqlx"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/sqlxpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/entity"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/data/sqlxpkg"
 )
 
 type Module struct {

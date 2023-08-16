@@ -5,8 +5,8 @@ import (
 	"net/http"
 
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
 )
 
 type Auth struct {

@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/core"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonpkg"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/multipart"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/multipart"
 )
 
 type Handler struct {

@@ -9,7 +9,7 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/rbac"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth"
 
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/response"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
 )
 
 // RBAC Role Based Access Control middleware

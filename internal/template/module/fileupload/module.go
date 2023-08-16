@@ -1,12 +1,12 @@
 package fileupload
 
 import (
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/s3pkg"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3pkg"
 )
 
 type Module struct {
-	Handler    *Handler
-	Service    *Service
+	Handler *Handler
+	Service *Service
 }
 
 func NewModule(clientsS3 *s3pkg.Clients) *Module {
