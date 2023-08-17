@@ -7,11 +7,11 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
+	validatorpkg "github.com/tanveerprottoy/stdlib-go-template/internal/pkg/validator"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/adapter"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonpkg"
-	validatorpkg "github.com/tanveerprottoy/stdlib-go-template/pkg/validator"
 )
 
 // Hanlder is responsible for extracting data

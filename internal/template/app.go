@@ -16,6 +16,7 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/middleware"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/router"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3pkg"
+	validatorpkg "github.com/tanveerprottoy/stdlib-go-template/internal/pkg/validator"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload"
@@ -23,7 +24,6 @@ import (
 	modulerouter "github.com/tanveerprottoy/stdlib-go-template/internal/template/router"
 	configpkg "github.com/tanveerprottoy/stdlib-go-template/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
-	validatorpkg "github.com/tanveerprottoy/stdlib-go-template/pkg/validator"
 )
 
 // App struct
@@ -31,6 +31,7 @@ type App struct {
 	Server           *http.Server
 	idleConnsClosed  chan struct{}
 	DBClient         *sqlxpkg.Client
+	ClientsS3        *s3pkg.Clients
 	router           *router.Router
 	Middlewares      []any
 	AuthModule       *auth.Module
@@ -38,7 +39,6 @@ type App struct {
 	ContentModule    *content.Module
 	FileUploadModule *fileupload.Module
 	Validate         *validator.Validate
-	ClientsS3        *s3pkg.Clients
 }
 
 // NewApp creates App
