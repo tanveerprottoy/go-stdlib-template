@@ -28,17 +28,17 @@ func (s *Service) ReadOneInternal(id string) (entity.User, error) {
 
 func (s *Service) Create(d *dto.CreateUpdateUserDTO, ctx context.Context) (entity.User, *errorpkg.HTTPError) {
 	// convert dto to entity
-	b := entity.User{}
-	b.Name = d.Name
+	e := entity.User{}
+	e.Name = d.Name
 	// b.Role = d.Role
 	n := timepkg.NowUnixMilli()
-	b.CreatedAt = n
-	b.UpdatedAt = n
-	err := s.repository.Create(&b)
+	e.CreatedAt = n
+	e.UpdatedAt = n
+	err := s.repository.Create(&e)
 	if err != nil {
-		return b, errorpkg.HandleDBError(err)
+		return e, errorpkg.HandleDBError(err)
 	}
-	return b, nil
+	return e, nil
 }
 
 func (s *Service) ReadMany(limit, page int, ctx context.Context) (map[string]any, *errorpkg.HTTPError) {
