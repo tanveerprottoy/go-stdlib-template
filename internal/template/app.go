@@ -176,6 +176,7 @@ func (a *App) initComponents() {
 
 // Run runs the server
 func (a *App) Run() {
+	// if err == http.ErrServerClosed do nothing
 	if err := a.Server.ListenAndServe(); err != http.ErrServerClosed {
 		// Error starting or closing listener:
 		log.Fatalf("HTTP Server ListenAndServe: %v", err)
@@ -186,6 +187,7 @@ func (a *App) Run() {
 
 // RunTLS runs the server with TLS
 func (a *App) RunTLS() {
+	// if err == http.ErrServerClosed do nothing
 	if err := a.Server.ListenAndServeTLS("cert.crt", "key.key"); err != http.ErrServerClosed {
 		// Error starting or closing listener:
 		log.Fatalf("HTTPS server ListenAndServe: %v", err)
