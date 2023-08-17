@@ -9,53 +9,53 @@ type Response[T any] struct {
 	Data any `json:"data"`
 }
 
-func writeResponse(writer http.ResponseWriter, bytes []byte) (int, error) {
-	return writer.Write(bytes)
+func writeResponse(w http.ResponseWriter, b []byte) (int, error) {
+	return w.Write(b)
 }
 
 func BuildData[T any](payload T) *Response[T] {
 	return &Response[T]{Data: payload}
 }
 
-func Respond(code int, payload any, writer http.ResponseWriter) {
+func Respond(code int, payload any, w http.ResponseWriter) {
 	res, err := json.Marshal(payload)
 	if err != nil {
-		RespondError(http.StatusInternalServerError, "error", err, writer)
+		RespondError(http.StatusInternalServerError, "error", err, w)
 		return
 	}
-	writer.WriteHeader(code)
-	writeResponse(writer, res)
+	w.WriteHeader(code)
+	writeResponse(w, res)
 }
 
-func RespondError(code int, key string, errs any, writer http.ResponseWriter) {
+func RespondError(code int, key string, errs any, w http.ResponseWriter) {
 	res, errs := json.Marshal(map[string]any{key: errs})
-	writer.Header().Set("Content-Type", "application/json; charset=utf-8")
-	writer.WriteHeader(code)
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	w.WriteHeader(code)
 	if errs != nil {
 		// log failed to marshal
 		return
 	}
-	writeResponse(writer, res)
+	writeResponse(w, res)
 }
 
-func RespondErrorMessage(code int, msg string, writer http.ResponseWriter) {
+func RespondErrorMessage(code int, msg string, w http.ResponseWriter) {
 	res, err := json.Marshal(map[string]string{"error": msg})
-	writer.WriteHeader(code)
+	w.WriteHeader(code)
 	if err != nil {
-		writeResponse(writer, []byte(err.Error()))
+		writeResponse(w, []byte(err.Error()))
 		return
 	}
-	writeResponse(writer, res)
+	writeResponse(w, res)
 }
 
-func RespondAlt(code int, payload any, writer http.ResponseWriter) {
-	writer.WriteHeader(code)
-	err := json.NewEncoder(writer).Encode(payload)
+func RespondAlt(code int, payload any, w http.ResponseWriter) {
+	w.WriteHeader(code)
+	err := json.NewEncoder(w).Encode(payload)
 	if err != nil {
-		RespondError(http.StatusInternalServerError, "error", err, writer)
+		RespondError(http.StatusInternalServerError, "error", err, w)
 	}
 }
 
-func RespondErrorAlt(code int, errMsg string, writer http.ResponseWriter) {
-	http.Error(writer, errMsg, code)
+func RespondErrorAlt(code int, errMsg string, w http.ResponseWriter) {
+	http.Error(w, errMsg, code)
 }

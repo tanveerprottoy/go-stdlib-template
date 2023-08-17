@@ -13,10 +13,10 @@ import (
 
 // ParseValidateRequestBody parses and validates the request body
 // The caller must pass the address for the v any param, ex: &v
-func ParseValidateRequestBody(readCloser io.ReadCloser, v any, validate *validator.Validate) ([]errorpkg.ValidationError, error) {
-	defer readCloser.Close()
+func ParseValidateRequestBody(r io.ReadCloser, v any, validate *validator.Validate) ([]errorpkg.ValidationError, error) {
+	defer r.Close()
 	var validationErrs []errorpkg.ValidationError
-	err := jsonpkg.Decode(readCloser, v)
+	err := jsonpkg.Decode(r, v)
 	if err != nil {
 		return nil, err
 	}

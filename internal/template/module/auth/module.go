@@ -6,8 +6,8 @@ type Module struct {
 	Service *Service
 }
 
-func NewModule(userService *user.Service) *Module {
+func NewModule(s *user.Service) *Module {
 	m := new(Module)
-	m.Service = NewService(userService)
+	m.Service = NewService(s)
 	return m
 }

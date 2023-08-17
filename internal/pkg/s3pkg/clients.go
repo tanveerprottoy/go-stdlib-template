@@ -39,11 +39,11 @@ func GetInstance() *Clients {
 //		o.Region = "us-east-1"
 //		o.UseAccelerate = true
 //	})
-func (c *Clients) Init(options s3.Options, optFn func(*s3.Options)) {
+func (c *Clients) Init(o s3.Options, optFn func(*s3.Options)) {
 	if optFn != nil {
-		c.S3Client = s3.New(options, optFn)
+		c.S3Client = s3.New(o, optFn)
 	} else {
-		c.S3Client = s3.New(options)
+		c.S3Client = s3.New(o)
 	}
 	// init presignClient
 	c.PresignClient = s3.NewPresignClient(c.S3Client)
