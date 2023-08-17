@@ -91,8 +91,8 @@ func (a *App) initS3() {
 	}, a.ClientsS3.S3Client, context.Background()) */
 }
 
-// initValidators initializes validators
-func (a *App) initValidators() {
+// initValidator initializes validator
+func (a *App) initValidator() {
 	a.Validate = validator.New()
 	_ = a.Validate.RegisterValidation("notempty", validatorpkg.NotEmpty)
 }
@@ -168,7 +168,7 @@ func (a *App) initComponents() {
 	a.createDir()
 	a.router = router.NewRouter()
 	a.initS3()
-	a.initValidators()
+	a.initValidator()
 	a.initModules()
 	a.initMiddlewares()
 	a.initModuleRouters()
