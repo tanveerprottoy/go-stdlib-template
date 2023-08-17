@@ -15,7 +15,7 @@ func MakeHTTPError(code int, err error) HTTPError {
 	return HTTPError{code, err}
 }
 
-func HandleDBError(err error) *HTTPError {
+func MakeDBError(err error) *HTTPError {
 	httpErr := &HTTPError{Code: http.StatusBadRequest, Err: err}
 	if err.Error() == "sql: no rows in result set" {
 		httpErr.Code = http.StatusNotFound
