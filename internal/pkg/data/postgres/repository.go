@@ -3,7 +3,7 @@ package postgres
 import "database/sql"
 
 type Repository[T any] interface {
-	Create(e *T) error
+	Create(e *T) (string, error)
 
 	ReadMany(limit, offset int) (*sql.Rows, error)
 

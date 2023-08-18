@@ -19,9 +19,9 @@ func RegisterContentRoutes(router *router.Router, version string, module *conten
 				// protected routes
 				// r.Use(rbacMiddleWare.AuthRole)
 				// r.Use(authMiddleWare.AuthUser)
+				r.Post(constant.RootPattern, module.Handler.Create)
 				r.Get(constant.RootPattern, module.Handler.ReadMany)
 				r.Get(constant.RootPattern+"{id}", module.Handler.ReadOne)
-				r.Post(constant.RootPattern, module.Handler.Create)
 				r.Patch(constant.RootPattern+"{id}", module.Handler.Update)
 				r.Delete(constant.RootPattern+"{id}", module.Handler.Delete)
 			})

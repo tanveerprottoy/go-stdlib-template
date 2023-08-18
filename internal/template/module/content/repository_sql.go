@@ -2,7 +2,6 @@ package content
 
 import (
 	"database/sql"
-	"fmt"
 
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/postgres"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/entity"
@@ -16,13 +15,13 @@ func NewRepositorySQL(db *sql.DB) *RepositorySQL[entity.Content] {
 	return &RepositorySQL[entity.Content]{db: db}
 }
 
-func (r *RepositorySQL[T]) Create(e *entity.Content) error {
-	res, err := r.db.Exec("INSERT INTO "+TableName+" (name, created_at, updated_at) VALUES ($1, $2, $3) RETURNING id", e.Name, e.CreatedAt, e.UpdatedAt)
+func (r *RepositorySQL[T]) Create(e *entity.Content) (string, error) {
+	var lastID string
+	err := r.db.QueryRow("INSERT INTO "+TableName+" (name, created_at, updated_at) VALUES ($1, $2, $3) RETURNING id", e.Name, e.CreatedAt, e.UpdatedAt).Scan(&lastID)
 	if err != nil {
-		return err
+		return lastID, err
 	}
-	fmt.Println("res: ", res)
-	return nil
+	return lastID, nil
 }
 
 func (r *RepositorySQL[T]) ReadMany(limit, offset int) (*sql.Rows, error) {

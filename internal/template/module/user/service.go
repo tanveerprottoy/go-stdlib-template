@@ -36,7 +36,7 @@ func (s *Service) Create(d *dto.CreateUpdateUserDTO, ctx context.Context) (entit
 	e.UpdatedAt = n
 	err := s.repository.Create(&e)
 	if err != nil {
-		return e, errorpkg.MakeDBError(err)
+		return e, errorpkg.BuildDBError(err)
 	}
 	return e, nil
 }
@@ -49,7 +49,7 @@ func (s *Service) ReadMany(limit, page int, ctx context.Context) (map[string]any
 	offset := limit * (page - 1)
 	d, err := s.repository.ReadMany(limit, offset)
 	if err != nil {
-		return m, errorpkg.MakeDBError(err)
+		return m, errorpkg.BuildDBError(err)
 	}
 	m["items"] = d
 	return m, nil
@@ -58,7 +58,7 @@ func (s *Service) ReadMany(limit, page int, ctx context.Context) (map[string]any
 func (s *Service) ReadOne(id string, ctx context.Context) (entity.User, *errorpkg.HTTPError) {
 	b, err := s.ReadOneInternal(id)
 	if err != nil {
-		return b, errorpkg.MakeDBError(err)
+		return b, errorpkg.BuildDBError(err)
 	}
 	return b, nil
 }
@@ -66,13 +66,13 @@ func (s *Service) ReadOne(id string, ctx context.Context) (entity.User, *errorpk
 func (s *Service) Update(id string, d *dto.CreateUpdateUserDTO, ctx context.Context) (entity.User, *errorpkg.HTTPError) {
 	b, err := s.ReadOneInternal(id)
 	if err != nil {
-		return b, errorpkg.MakeDBError(err)
+		return b, errorpkg.BuildDBError(err)
 	}
 	b.Name = d.Name
 	b.UpdatedAt = timepkg.NowUnixMilli()
 	rows, err := s.repository.Update(id, &b)
 	if err != nil {
-		return b, errorpkg.MakeDBError(err)
+		return b, errorpkg.BuildDBError(err)
 	}
 	if rows > 0 {
 		return b, nil
@@ -83,11 +83,11 @@ func (s *Service) Update(id string, d *dto.CreateUpdateUserDTO, ctx context.Cont
 func (s *Service) Delete(id string, ctx context.Context) (entity.User, *errorpkg.HTTPError) {
 	b, err := s.ReadOneInternal(id)
 	if err != nil {
-		return b, errorpkg.MakeDBError(err)
+		return b, errorpkg.BuildDBError(err)
 	}
 	rows, err := s.repository.Delete(id)
 	if err != nil {
-		return b, errorpkg.MakeDBError(err)
+		return b, errorpkg.BuildDBError(err)
 	}
 	if rows > 0 {
 		return b, nil

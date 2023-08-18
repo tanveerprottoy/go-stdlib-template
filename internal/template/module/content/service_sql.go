@@ -38,10 +38,11 @@ func (s *ServiceSQL) Create(d dto.CreateUpdateContentDTO, ctx context.Context) (
 		CreatedAt: n,
 		UpdatedAt: n,
 	}
-	err := s.repository.Create(&e)
+	l, err := s.repository.Create(&e)
 	if err != nil {
-		return e, errorpkg.MakeDBError(err)
+		return e, errorpkg.BuildDBError(err)
 	}
+	e.Id = l
 	return e, nil
 }
 
@@ -53,7 +54,7 @@ func (s *ServiceSQL) ReadMany(limit, page int, ctx context.Context) (map[string]
 	offset := limit * (page - 1)
 	d, err := s.repository.ReadMany(limit, offset)
 	if err != nil {
-		return m, errorpkg.MakeDBError(err)
+		return m, errorpkg.BuildDBError(err)
 	}
 	m["items"] = d
 	return m, nil
@@ -62,7 +63,7 @@ func (s *ServiceSQL) ReadMany(limit, page int, ctx context.Context) (map[string]
 func (s *ServiceSQL) ReadOne(id string, ctx context.Context) (entity.Content, *errorpkg.HTTPError) {
 	b, err := s.readOneInternal(id)
 	if err != nil {
-		return b, errorpkg.MakeDBError(err)
+		return b, errorpkg.BuildDBError(err)
 	}
 	return b, nil
 }
@@ -70,13 +71,13 @@ func (s *ServiceSQL) ReadOne(id string, ctx context.Context) (entity.Content, *e
 func (s *ServiceSQL) Update(id string, d *dto.CreateUpdateContentDTO, ctx context.Context) (entity.Content, *errorpkg.HTTPError) {
 	b, err := s.readOneInternal(id)
 	if err != nil {
-		return b, errorpkg.MakeDBError(err)
+		return b, errorpkg.BuildDBError(err)
 	}
 	b.Name = d.Name
 	b.UpdatedAt = timepkg.NowUnixMilli()
 	rows, err := s.repository.Update(id, &b)
 	if err != nil {
-		return b, errorpkg.MakeDBError(err)
+		return b, errorpkg.BuildDBError(err)
 	}
 	if rows > 0 {
 		return b, nil
@@ -87,11 +88,11 @@ func (s *ServiceSQL) Update(id string, d *dto.CreateUpdateContentDTO, ctx contex
 func (s *ServiceSQL) Delete(id string, ctx context.Context) (entity.Content, *errorpkg.HTTPError) {
 	b, err := s.readOneInternal(id)
 	if err != nil {
-		return b, errorpkg.MakeDBError(err)
+		return b, errorpkg.BuildDBError(err)
 	}
 	rows, err := s.repository.Delete(id)
 	if err != nil {
-		return b, errorpkg.MakeDBError(err)
+		return b, errorpkg.BuildDBError(err)
 	}
 	if rows > 0 {
 		return b, nil

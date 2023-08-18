@@ -60,14 +60,17 @@ func StringToFloat(s string, bitSize int) (float64, error) {
 	return strconv.ParseFloat(s, bitSize)
 }
 
-func ValuesToStruct[T any](params []any, t T) {
+// ValuesToStruct will set the values provided on the 
+// struct provided in the param
+// caller must provide pointer addresses of values and t 
+func  ValuesToStruct[T any](values []any, obj T) {
 	v := reflect.Indirect(
-		reflect.ValueOf(t).Elem(),
+		reflect.ValueOf(obj).Elem(),
 	)
 	for i := 0; i < v.NumField(); i++ {
 		f := v.Field(i)
 		if f.CanSet() {
-			param := params[i]
+			param := values[i]
 			switch f.Kind() {
 			case reflect.String:
 				f.SetString(
