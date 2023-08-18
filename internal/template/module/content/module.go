@@ -13,12 +13,11 @@ type Module struct {
 	Repository sqlxpkg.Repository[entity.Content]
 }
 
-func NewModule(db *sqlx.DB, validate *validator.Validate) *Module {
-	m := new(Module)
+func NewModule(db *sqlx.DB, v *validator.Validate) *Module {
 	// init order is reversed of the field decleration
 	// as the dependency is served this way
-	m.Repository = NewRepository(db)
-	m.Service = NewService(m.Repository)
-	m.Handler = NewHandler(m.Service, validate)
-	return m
+	r := NewRepository(db)
+	s := NewService(r)
+	h := NewHandler(s, v)
+	return &Module{Handler: h, Service: s, Repository: r}
 }
