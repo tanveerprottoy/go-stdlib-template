@@ -16,22 +16,22 @@ func GetRowsAffected(result sql.Result) int64 {
 	return rows
 }
 
-func GetEntities[T any](rows *sql.Rows, obj *T, params ...interface{}) ([]*T, error) {
-	var entities []*T
+func GetEntities[T any](rows *sql.Rows, obj T, params ...interface{}) ([]T, error) {
+	var e []T
 	// Loop through rows, using Scan to assign column data to struct fields.
 	for rows.Next() {
 		if err := rows.Scan(params...); err != nil {
 			return nil, fmt.Errorf("GetEntities %v", err)
 		}
 		adapter.ValuesToStruct(params, obj)
-		entities = append(entities, obj)
+		e = append(e, obj)
 	}
-	return entities, nil
+	return e, nil
 }
 
-func GetEntity[T any](row *sql.Row, obj *T, params ...interface{}) (*T, error) {
+func GetEntity[T any](row *sql.Row, obj T, params ...interface{}) (T, error) {
 	if err := row.Scan(params...); err != nil {
-		return nil, fmt.Errorf("GetEntity %v", err)
+		return obj, fmt.Errorf("GetEntity %v", err)
 	}
 	adapter.ValuesToStruct(params, obj)
 	return obj, nil

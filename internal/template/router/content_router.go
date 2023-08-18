@@ -17,7 +17,7 @@ func RegisterContentRoutes(router *router.Router, version string, module *conten
 			r.Get(constant.RootPattern+"public", module.Handler.Public)
 			r.Group(func(r chi.Router) {
 				// protected routes
-				r.Use(rbacMiddleWare.AuthRole)
+				// r.Use(rbacMiddleWare.AuthRole)
 				// r.Use(authMiddleWare.AuthUser)
 				r.Get(constant.RootPattern, module.Handler.ReadMany)
 				r.Get(constant.RootPattern+"{id}", module.Handler.ReadOne)

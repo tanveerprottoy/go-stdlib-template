@@ -60,12 +60,12 @@ func StringToFloat(s string, bitSize int) (float64, error) {
 	return strconv.ParseFloat(s, bitSize)
 }
 
-func ValuesToStruct[T any](params []any, t *T) {
-	value := reflect.Indirect(
+func ValuesToStruct[T any](params []any, t T) {
+	v := reflect.Indirect(
 		reflect.ValueOf(t).Elem(),
 	)
-	for i := 0; i < value.NumField(); i++ {
-		f := value.Field(i)
+	for i := 0; i < v.NumField(); i++ {
+		f := v.Field(i)
 		if f.CanSet() {
 			param := params[i]
 			switch f.Kind() {
