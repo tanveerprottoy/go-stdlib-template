@@ -26,7 +26,7 @@ func NewServiceSQL(r postgres.Repository[entity.Content]) *ServiceSQL {
 func (s *ServiceSQL) readOneInternal(id string) (entity.Content, error) {
 	var e entity.Content
 	row := s.repository.ReadOne(id)
-	return postgres.GetEntity[entity.Content](row, e, e.Id, e.Name, e.CreatedAt, e.UpdatedAt)
+	return postgres.GetEntity[entity.Content](row, &e, &e.Id, &e.Name, &e.CreatedAt, &e.UpdatedAt)
 }
 
 // Create defines the business logic for create post request

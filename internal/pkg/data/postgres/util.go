@@ -1,10 +1,11 @@
-package data
+package postgres
 
 import (
 	"database/sql"
 	"fmt"
 	"log"
 
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/adapter"
 )
 
 func GetRowsAffected(result sql.Result) int64 {
