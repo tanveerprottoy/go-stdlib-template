@@ -19,16 +19,16 @@ func GetRowsAffected(result sql.Result) int64 {
 // GetEntities convert rows to entity slice
 // must provide pointer address for params
 func GetEntities[T any](rows *sql.Rows, obj *T, params ...any) ([]T, error) {
-	var e []T
+	d := []T{}
 	// Loop through rows, using Scan to assign column data to struct fields.
 	for rows.Next() {
 		if err := rows.Scan(params...); err != nil {
 			return nil, fmt.Errorf("GetEntities %v", err)
 		}
 		adapter.ValuesToStruct(params, obj)
-		e = append(e, *obj)
+		d = append(d, *obj)
 	}
-	return e, nil
+	return d, nil
 }
 
 func GetEntity[T any](row *sql.Row, obj *T, params ...any) (T, error) {
