@@ -94,6 +94,7 @@ func (a *App) initS3() {
 // initValidator initializes validator
 func (a *App) initValidator() {
 	a.Validate = validator.New()
+	validatorpkg.RegisterTagNameFunc(a.Validate)
 	_ = a.Validate.RegisterValidation("notempty", validatorpkg.NotEmpty)
 }
 

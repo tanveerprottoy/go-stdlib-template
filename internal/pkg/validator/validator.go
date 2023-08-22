@@ -1,7 +1,6 @@
 package validator
 
 import (
-	"fmt"
 	"io"
 	"reflect"
 	"strings"
@@ -26,12 +25,24 @@ func ParseValidateRequestBody(r io.ReadCloser, v any, validate *validator.Valida
 		// Struct is invalid
 		var v errorpkg.ValidationError
 		for _, err := range err.(validator.ValidationErrors) {
-			fmt.Println(err.Field(), err.Tag())
 			v.Message = err.Field() + " " + err.Tag()
 			validationErrs = append(validationErrs, v)
 		}
 	}
 	return validationErrs, err
+}
+
+// RegisterTagNameFunc configures validator to use
+// defined json name to use as struct field name
+func RegisterTagNameFunc(validate *validator.Validate) {
+	validate.RegisterTagNameFunc(func(field reflect.StructField) string {
+		n := strings.SplitN(field.Tag.Get("json"), ",", 2)[0]
+		// skip if tag key says it should be ignored
+		if n == "-" {
+			return ""
+		}
+		return n
+	})
 }
 
 func NotEmpty(fl validator.FieldLevel) bool {
