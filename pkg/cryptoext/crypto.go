@@ -1,4 +1,4 @@
-package crypto
+package cryptoext
 
 import (
 	"crypto/x509"

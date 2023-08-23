@@ -1,4 +1,4 @@
-package errorpkg
+package errorext
 
 type HTTPError struct {
 	Code int

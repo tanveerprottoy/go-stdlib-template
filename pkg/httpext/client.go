@@ -1,4 +1,4 @@
-package httppkg
+package httpext
 
 import (
 	"io"

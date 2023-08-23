@@ -1,4 +1,4 @@
-package errorpkg
+package errorext
 
 import (
 	"errors"
