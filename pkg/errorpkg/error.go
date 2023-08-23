@@ -7,8 +7,8 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/constant"
 )
 
-func NewError(m string) error {
-	return errors.New(m)
+func NewError(msg string) error {
+	return errors.New(msg)
 }
 
 func BuildDBError(err error) *HTTPError {
