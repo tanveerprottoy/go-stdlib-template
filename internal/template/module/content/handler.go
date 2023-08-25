@@ -10,7 +10,7 @@ import (
 	validatorpkg "github.com/tanveerprottoy/stdlib-go-template/internal/pkg/validator"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/adapter"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/httpext"
 )
 
 // Hanlder is responsible for extracting data
@@ -53,7 +53,7 @@ func (h *Handler) ReadMany(w http.ResponseWriter, r *http.Request) {
 	limit := 10
 	page := 1
 	var err error
-	limitStr := httppkg.GetQueryParam(r, constant.KeyLimit)
+	limitStr := httpext.GetQueryParam(r, constant.KeyLimit)
 	if limitStr != "" {
 		limit, err = adapter.StringToInt(limitStr)
 		if err != nil {
@@ -61,7 +61,7 @@ func (h *Handler) ReadMany(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
-	pageStr := httppkg.GetQueryParam(r, constant.KeyPage)
+	pageStr := httpext.GetQueryParam(r, constant.KeyPage)
 	if pageStr != "" {
 		page, err = adapter.StringToInt(pageStr)
 		if err != nil {
@@ -78,7 +78,7 @@ func (h *Handler) ReadMany(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) ReadOne(w http.ResponseWriter, r *http.Request) {
-	id := httppkg.GetURLParam(r, constant.KeyId)
+	id := httpext.GetURLParam(r, constant.KeyId)
 	e, httpErr := h.service.ReadOne(id, nil)
 	if httpErr != nil {
 		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
@@ -88,7 +88,7 @@ func (h *Handler) ReadOne(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
-	id := httppkg.GetURLParam(r, constant.KeyId)
+	id := httpext.GetURLParam(r, constant.KeyId)
 	var d dto.CreateUpdateContentDTO
 	validationErrs, err := validatorpkg.ParseValidateRequestBody(r.Body, &d, h.validate)
 	if validationErrs != nil {
@@ -108,7 +108,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
-	id := httppkg.GetURLParam(r, constant.KeyId)
+	id := httpext.GetURLParam(r, constant.KeyId)
 	e, httpErr := h.service.Delete(id, nil)
 	if httpErr != nil {
 		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)

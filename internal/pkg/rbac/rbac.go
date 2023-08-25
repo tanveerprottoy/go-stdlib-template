@@ -3,7 +3,7 @@ package rbac
 import (
 	"fmt"
 
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/stringspkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/stringsext"
 )
 
 func buildAndFindForKey(slice []string, offset int, method, param string) any {
@@ -25,7 +25,7 @@ func buildAndFindForKey(slice []string, offset int, method, param string) any {
 // GetRBAC fetches from the Role based access control
 // json file if the data exists
 func GetRBAC(path, method string) any {
-	s := stringspkg.Split(path, "/")
+	s := stringsext.Split(path, "/")
 	fmt.Println(s)
 	v := buildAndFindForKey(s, 1, method, "")
 	if v == nil {

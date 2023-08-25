@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
 )
 
 func IOReaderToBytes(r io.Reader) ([]byte, error) {
@@ -18,13 +18,13 @@ func IOReaderToBytes(r io.Reader) ([]byte, error) {
 
 func BytesToType[T any](b []byte) (*T, error) {
 	var out T
-	err := jsonpkg.Unmarshal(b, &out)
+	err := jsonext.Unmarshal(b, &out)
 	return &out, err
 }
 
 func BodyToType[T any](r io.ReadCloser) (*T, error) {
 	var out T
-	err := jsonpkg.Decode(r, &out)
+	err := jsonext.Decode(r, &out)
 	if err != nil {
 		return nil, err
 	}
@@ -33,11 +33,11 @@ func BodyToType[T any](r io.ReadCloser) (*T, error) {
 
 func AnyToType[T any](v any) (*T, error) {
 	var out T
-	b, err := jsonpkg.Marshal(v)
+	b, err := jsonext.Marshal(v)
 	if err != nil {
 		return nil, err
 	}
-	err = jsonpkg.Unmarshal(b, &out)
+	err = jsonext.Unmarshal(b, &out)
 	if err != nil {
 		return nil, err
 	}
@@ -60,10 +60,10 @@ func StringToFloat(s string, bitSize int) (float64, error) {
 	return strconv.ParseFloat(s, bitSize)
 }
 
-// ValuesToStruct will set the values provided on the 
+// ValuesToStruct will set the values provided on the
 // struct provided in the param
-// caller must provide pointer addresses of values and t 
-func  ValuesToStruct[T any](values []any, obj T) {
+// caller must provide pointer addresses of values and t
+func ValuesToStruct[T any](values []any, obj T) {
 	v := reflect.Indirect(
 		reflect.ValueOf(obj).Elem(),
 	)

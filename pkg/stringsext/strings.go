@@ -1,4 +1,4 @@
-package stringspkg
+package stringsext
 
 import "strings"
 

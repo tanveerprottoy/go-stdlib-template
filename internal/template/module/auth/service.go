@@ -6,8 +6,8 @@ import (
 
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/entity"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/httppkg"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jwtpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/httpext"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/jwtext"
 )
 
 type Service struct {
@@ -22,12 +22,12 @@ func NewService(userService *user.Service) *Service {
 
 func (s *Service) Authorize(r *http.Request) (entity.User, error) {
 	var e entity.User
-	splits, err := httppkg.ParseAuthToken(r)
+	splits, err := httpext.ParseAuthToken(r)
 	if err != nil {
 		return e, err
 	}
 	tokenBody := splits[1]
-	claims, err := jwtpkg.VerifyToken(tokenBody)
+	claims, err := jwtext.VerifyToken(tokenBody)
 	if err != nil {
 		return e, err
 	}

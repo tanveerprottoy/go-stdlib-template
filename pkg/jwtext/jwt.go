@@ -1,11 +1,11 @@
-package jwtpkg
+package jwtext
 
 import (
 	"errors"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/timepkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/timeext"
 )
 
 // Create the JWT key used to create the signature
@@ -34,7 +34,7 @@ func GenerateToken(payload Payload) string {
 		Audience:  []string{"somebody_else"},
 	}, */
 	// Declare the expiration time of the token
-	expirationTime := timepkg.AddDate(0, 0, 3)
+	expirationTime := timeext.AddDate(0, 0, 3)
 	claims := &Claims{
 		Payload: payload,
 		RegisteredClaims: jwt.RegisteredClaims{

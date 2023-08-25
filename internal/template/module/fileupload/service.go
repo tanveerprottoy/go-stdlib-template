@@ -9,11 +9,11 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3pkg"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/multipart"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/timepkg"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/uuidpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/timeext"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/uuidext"
 )
 
 type Service struct {
@@ -79,7 +79,7 @@ func (s *Service) UploadOne(r *http.Request) (map[string]string, error) {
 
 func (s *Service) UploadOneDisk(r *http.Request) (map[string]string, error) {
 	m := map[string]string{"path": ""}
-	path, err := s.retrieveSaveFile("file", "./uploads", uuidpkg.NewUUIDStr(), r)
+	path, err := s.retrieveSaveFile("file", "./uploads", uuidext.NewUUIDStr(), r)
 	if err != nil {
 		return m, err
 	}
@@ -102,7 +102,7 @@ func (s *Service) UploadManyDisk(r *http.Request) (map[string][]string, error) {
 		if err != nil {
 			return m, err
 		}
-		p, err := multipart.SaveFile(f, fh, "./uploads", uuidpkg.NewUUIDStr(), r)
+		p, err := multipart.SaveFile(f, fh, "./uploads", uuidext.NewUUIDStr(), r)
 		if err != nil {
 			return m, err
 		}
@@ -114,7 +114,7 @@ func (s *Service) UploadManyDisk(r *http.Request) (map[string][]string, error) {
 
 func (s *Service) UploadManyWithKeysDisk(r *http.Request) (map[string][]string, error) {
 	m := map[string][]string{"paths": {""}}
-	paths, err := s.handleFilesForKeys([]string{"image0", "image1"}, "./uploads", []string{uuidpkg.NewUUIDStr(), uuidpkg.NewUUIDStr()}, r)
+	paths, err := s.handleFilesForKeys([]string{"image0", "image1"}, "./uploads", []string{uuidext.NewUUIDStr(), uuidext.NewUUIDStr()}, r)
 	if err != nil {
 		return m, err
 	}
@@ -132,7 +132,7 @@ func (s *Service) GetPresignedURLForOne(key string, ctx context.Context) (map[st
 		s.clientsS3.PresignClient,
 		ctx,
 		func(opts *s3.PresignOptions) {
-			opts.Expires = timepkg.Duration(5 * time.Minute)
+			opts.Expires = timeext.Duration(5 * time.Minute)
 		},
 	)
 	if err != nil {
@@ -148,7 +148,7 @@ func (s *Service) PutPresignedURLForOne(key string, ctx context.Context) (map[st
 		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
 		Key:    aws.String(key),
 	}, s.clientsS3.PresignClient, ctx, func(o *s3.PresignOptions) {
-		o.Expires = timepkg.Duration(2 * time.Minute)
+		o.Expires = timeext.Duration(2 * time.Minute)
 	})
 	if err != nil {
 		return m, err

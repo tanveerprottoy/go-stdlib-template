@@ -9,7 +9,7 @@ import (
 
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/constant"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jwtpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/jwtext"
 )
 
 // JSONContentTypeMiddleWare content type json setter middleware
@@ -53,7 +53,7 @@ func JWTMiddleWare(next http.Handler) http.Handler {
 			return
 		}
 		tokenBody := split[1]
-		claims, err := jwtpkg.VerifyToken(tokenBody)
+		claims, err := jwtext.VerifyToken(tokenBody)
 		if err != nil {
 			response.RespondError(http.StatusForbidden, "error", err, w)
 			return

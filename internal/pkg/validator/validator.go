@@ -6,16 +6,16 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorpkg"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorext"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
 )
 
 // ParseValidateRequestBody parses and validates the request body
 // The caller must pass the address for the v any param, ex: &v
-func ParseValidateRequestBody(r io.ReadCloser, v any, validate *validator.Validate) ([]errorpkg.ValidationError, error) {
+func ParseValidateRequestBody(r io.ReadCloser, v any, validate *validator.Validate) ([]errorext.ValidationError, error) {
 	defer r.Close()
-	var validationErrs []errorpkg.ValidationError
-	err := jsonpkg.Decode(r, v)
+	var validationErrs []errorext.ValidationError
+	err := jsonext.Decode(r, v)
 	if err != nil {
 		return nil, err
 	}
@@ -23,7 +23,7 @@ func ParseValidateRequestBody(r io.ReadCloser, v any, validate *validator.Valida
 	err = validate.Struct(v)
 	if err != nil {
 		// Struct is invalid
-		var v errorpkg.ValidationError
+		var v errorext.ValidationError
 		for _, err := range err.(validator.ValidationErrors) {
 			v.Message = err.Field() + " " + err.Tag()
 			validationErrs = append(validationErrs, v)

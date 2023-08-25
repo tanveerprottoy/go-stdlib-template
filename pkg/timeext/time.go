@@ -1,4 +1,4 @@
-package timepkg
+package timeext
 
 import "time"
 

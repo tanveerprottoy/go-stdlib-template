@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/core"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonpkg"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/multipart"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
 )
 
 type Handler struct {
@@ -93,7 +93,7 @@ func (h *Handler) UploadManyWithKeysDisk(w http.ResponseWriter, r *http.Request)
 func (h *Handler) PutPresignedURLForOne(w http.ResponseWriter, r *http.Request) {
 	var v dto.CreateUpdatePresignedDTO
 	defer r.Body.Close()
-	err := jsonpkg.Decode(r.Body, &v)
+	err := jsonext.Decode(r.Body, &v)
 	if err != nil {
 		response.RespondError(http.StatusInternalServerError, constant.Error, err, w)
 		return

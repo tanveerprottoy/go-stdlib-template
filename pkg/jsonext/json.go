@@ -1,4 +1,4 @@
-package jsonpkg
+package jsonext
 
 import (
 	"encoding/json"

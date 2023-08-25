@@ -8,8 +8,8 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/sqlxpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/entity"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorpkg"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/timepkg"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorext"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/timeext"
 )
 
 type Service struct {
@@ -26,21 +26,21 @@ func (s *Service) ReadOneInternal(id string) (entity.Content, error) {
 	return s.repository.ReadOne(id)
 }
 
-func (s *Service) Create(d *dto.CreateUpdateContentDTO, ctx context.Context) (entity.Content, *errorpkg.HTTPError) {
+func (s *Service) Create(d *dto.CreateUpdateContentDTO, ctx context.Context) (entity.Content, *errorext.HTTPError) {
 	// convert dto to entity
 	b := entity.Content{}
 	b.Name = d.Name
-	n := timepkg.NowUnixMilli()
+	n := timeext.NowUnixMilli()
 	b.CreatedAt = n
 	b.UpdatedAt = n
 	err := s.repository.Create(&b)
 	if err != nil {
-		return b, errorpkg.BuildDBError(err)
+		return b, errorext.BuildDBError(err)
 	}
 	return b, nil
 }
 
-func (s *Service) ReadMany(limit, page int, ctx context.Context) (map[string]any, *errorpkg.HTTPError) {
+func (s *Service) ReadMany(limit, page int, ctx context.Context) (map[string]any, *errorext.HTTPError) {
 	m := make(map[string]any)
 	m["items"] = make([]entity.Content, 0)
 	m["limit"] = limit
@@ -48,48 +48,48 @@ func (s *Service) ReadMany(limit, page int, ctx context.Context) (map[string]any
 	offset := limit * (page - 1)
 	d, err := s.repository.ReadMany(limit, offset)
 	if err != nil {
-		return m, errorpkg.BuildDBError(err)
+		return m, errorext.BuildDBError(err)
 	}
 	m["items"] = d
 	return m, nil
 }
 
-func (s *Service) ReadOne(id string, ctx context.Context) (entity.Content, *errorpkg.HTTPError) {
+func (s *Service) ReadOne(id string, ctx context.Context) (entity.Content, *errorext.HTTPError) {
 	b, err := s.ReadOneInternal(id)
 	if err != nil {
-		return b, errorpkg.BuildDBError(err)
+		return b, errorext.BuildDBError(err)
 	}
 	return b, nil
 }
 
-func (s *Service) Update(id string, d *dto.CreateUpdateContentDTO, ctx context.Context) (entity.Content, *errorpkg.HTTPError) {
+func (s *Service) Update(id string, d *dto.CreateUpdateContentDTO, ctx context.Context) (entity.Content, *errorext.HTTPError) {
 	b, err := s.ReadOneInternal(id)
 	if err != nil {
-		return b, errorpkg.BuildDBError(err)
+		return b, errorext.BuildDBError(err)
 	}
 	b.Name = d.Name
-	b.UpdatedAt = timepkg.NowUnixMilli()
+	b.UpdatedAt = timeext.NowUnixMilli()
 	rows, err := s.repository.Update(id, &b)
 	if err != nil {
-		return b, errorpkg.BuildDBError(err)
+		return b, errorext.BuildDBError(err)
 	}
 	if rows > 0 {
 		return b, nil
 	}
-	return b, &errorpkg.HTTPError{Code: http.StatusBadRequest, Err: errorpkg.NewError(constant.OperationNotSuccess)}
+	return b, &errorext.HTTPError{Code: http.StatusBadRequest, Err: errorext.NewError(constant.OperationNotSuccess)}
 }
 
-func (s *Service) Delete(id string, ctx context.Context) (entity.Content, *errorpkg.HTTPError) {
+func (s *Service) Delete(id string, ctx context.Context) (entity.Content, *errorext.HTTPError) {
 	b, err := s.ReadOneInternal(id)
 	if err != nil {
-		return b, errorpkg.BuildDBError(err)
+		return b, errorext.BuildDBError(err)
 	}
 	rows, err := s.repository.Delete(id)
 	if err != nil {
-		return b, errorpkg.BuildDBError(err)
+		return b, errorext.BuildDBError(err)
 	}
 	if rows > 0 {
 		return b, nil
 	}
-	return b, &errorpkg.HTTPError{Code: http.StatusBadRequest, Err: errorpkg.NewError(constant.OperationNotSuccess)}
+	return b, &errorext.HTTPError{Code: http.StatusBadRequest, Err: errorext.NewError(constant.OperationNotSuccess)}
 }

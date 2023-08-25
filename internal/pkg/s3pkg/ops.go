@@ -80,7 +80,7 @@ func GetObject(params *s3.GetObjectInput, client *s3.Client, ctx context.Context
 // ex:
 //
 //	optFns: func(opts *s3.PresignOptions) {
-//				opts.Expires =   timepkg.Duration(6 * int64(time.Second))
+//				opts.Expires =   timeext.Duration(6 * int64(time.Second))
 //			})
 func GetObjectPresigned(params *s3.GetObjectInput, client *s3.PresignClient, ctx context.Context, optFns ...func(*s3.PresignOptions)) (*v4.PresignedHTTPRequest, error) {
 	return client.PresignGetObject(ctx, params, optFns...)

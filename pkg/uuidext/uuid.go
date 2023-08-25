@@ -1,4 +1,4 @@
-package uuidpkg
+package uuidext
 
 import "github.com/google/uuid"
 
