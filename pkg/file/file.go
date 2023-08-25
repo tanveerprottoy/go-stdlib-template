@@ -3,7 +3,6 @@ package file
 import (
 	"errors"
 	"io"
-	"io/ioutil"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -25,32 +24,31 @@ func FilePathWalkDir(root string) ([]string, error) {
 	return files, err
 }
 
-func IOReadDir(root string) ([]string, error) {
+func ReadDir(root string) ([]string, error) {
 	var files []string
-	fileInfo, err := ioutil.ReadDir(root)
+	dirEntries, err := os.ReadDir(root)
 	if err != nil {
 		return files, err
 	}
-
-	for _, file := range fileInfo {
+	for _, file := range dirEntries {
 		files = append(files, file.Name())
 	}
 	return files, nil
 }
 
-func OSReadDir(root string) ([]string, error) {
+func ReadDir1(root string) ([]string, error) {
 	var files []string
 	f, err := os.Open(root)
 	if err != nil {
 		return files, err
 	}
-	fileInfo, err := f.Readdir(-1)
+	fileInfos, err := f.Readdir(-1)
 	f.Close()
 	if err != nil {
 		return files, err
 	}
 
-	for _, file := range fileInfo {
+	for _, file := range fileInfos {
 		files = append(files, file.Name())
 	}
 	return files, nil
