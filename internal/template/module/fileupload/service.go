@@ -10,17 +10,17 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/multipart"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3pkg"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3ext"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/timeext"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/uuidext"
 )
 
 type Service struct {
-	clientsS3 *s3pkg.Clients
+	clientsS3 *s3ext.Clients
 }
 
-func NewService(clientsS3 *s3pkg.Clients) *Service {
+func NewService(clientsS3 *s3ext.Clients) *Service {
 	s := new(Service)
 	s.clientsS3 = clientsS3
 	return s
@@ -59,7 +59,7 @@ func (s *Service) UploadOne(r *http.Request) (map[string]string, error) {
 	if err != nil {
 		return m, err
 	}
-	o, err := s3pkg.PutObject(
+	o, err := s3ext.PutObject(
 		&s3.PutObjectInput{
 			Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
 			Key:    aws.String("my-folder/" + h.Filename),
@@ -73,7 +73,7 @@ func (s *Service) UploadOne(r *http.Request) (map[string]string, error) {
 	}
 	fmt.Println(o)
 	// fetch url
-	m["path"] = s3pkg.BuildObjectURLPathStyle(config.GetEnvValue("S3_REGION"), config.GetEnvValue("BUCKET_NAME"), h.Filename)
+	m["path"] = s3ext.BuildObjectURLPathStyle(config.GetEnvValue("S3_REGION"), config.GetEnvValue("BUCKET_NAME"), h.Filename)
 	return m, nil
 }
 
@@ -124,7 +124,7 @@ func (s *Service) UploadManyWithKeysDisk(r *http.Request) (map[string][]string, 
 
 func (s *Service) GetPresignedURLForOne(key string, ctx context.Context) (map[string]string, error) {
 	m := map[string]string{"signedUrl": ""}
-	o, err := s3pkg.GetObjectPresigned(
+	o, err := s3ext.GetObjectPresigned(
 		&s3.GetObjectInput{
 			Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
 			Key:    aws.String(key),
@@ -144,7 +144,7 @@ func (s *Service) GetPresignedURLForOne(key string, ctx context.Context) (map[st
 
 func (s *Service) PutPresignedURLForOne(key string, ctx context.Context) (map[string]string, error) {
 	m := map[string]string{"signedUrl": ""}
-	o, err := s3pkg.PutObjectPresigned(&s3.PutObjectInput{
+	o, err := s3ext.PutObjectPresigned(&s3.PutObjectInput{
 		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
 		Key:    aws.String(key),
 	}, s.clientsS3.PresignClient, ctx, func(o *s3.PresignOptions) {

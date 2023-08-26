@@ -7,7 +7,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
-	validatorpkg "github.com/tanveerprottoy/stdlib-go-template/internal/pkg/validator"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/validatorext"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/adapter"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/httpext"
@@ -49,7 +49,7 @@ func (h *Handler) parseValidateRequestBody(r *http.Request) (dto.CreateUpdateUse
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	// d, err := h.parseValidateRequestBody(r)
 	var d dto.CreateUpdateUserDTO
-	validationErrs, err := validatorpkg.ParseValidateRequestBody(r.Body, &d, h.validate)
+	validationErrs, err := validatorext.ParseValidateRequestBody(r.Body, &d, h.validate)
 	if validationErrs != nil {
 		response.RespondError(http.StatusBadRequest, constant.Errors, validationErrs, w)
 		return

@@ -7,7 +7,7 @@ import (
 	"github.com/go-playground/validator/v10"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
-	validatorpkg "github.com/tanveerprottoy/stdlib-go-template/internal/pkg/validator"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/validatorext"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/adapter"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/httpext"
@@ -29,7 +29,7 @@ func NewHandler(s *Service, v *validator.Validate) *Handler {
 
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	var d dto.CreateUpdateContentDTO
-	validationErrs, err := validatorpkg.ParseValidateRequestBody(r.Body, &d, h.validate)
+	validationErrs, err := validatorext.ParseValidateRequestBody(r.Body, &d, h.validate)
 	if validationErrs != nil {
 		response.RespondError(http.StatusBadRequest, constant.Errors, validationErrs, w)
 		return
@@ -90,7 +90,7 @@ func (h *Handler) ReadOne(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	id := httpext.GetURLParam(r, constant.KeyId)
 	var d dto.CreateUpdateContentDTO
-	validationErrs, err := validatorpkg.ParseValidateRequestBody(r.Body, &d, h.validate)
+	validationErrs, err := validatorext.ParseValidateRequestBody(r.Body, &d, h.validate)
 	if validationErrs != nil {
 		response.RespondError(http.StatusBadRequest, constant.Errors, validationErrs, w)
 		return

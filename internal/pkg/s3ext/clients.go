@@ -1,4 +1,4 @@
-package s3pkg
+package s3ext
 
 import (
 	"sync"

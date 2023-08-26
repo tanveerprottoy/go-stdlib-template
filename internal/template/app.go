@@ -15,8 +15,8 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/sqlxpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/middleware"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/router"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3pkg"
-	validatorpkg "github.com/tanveerprottoy/stdlib-go-template/internal/pkg/validator"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3ext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/validatorext"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload"
@@ -31,7 +31,7 @@ type App struct {
 	Server           *http.Server
 	idleConnsClosed  chan struct{}
 	DBClient         *sqlxpkg.Client
-	ClientsS3        *s3pkg.Clients
+	ClientsS3        *s3ext.Clients
 	router           *router.Router
 	Middlewares      []any
 	AuthModule       *auth.Module
@@ -75,7 +75,7 @@ func (a *App) initS3() {
 		// returning EndpointNotFoundError will allow the service to fallback to it's default resolution
 		return aws.Endpoint{}, &aws.EndpointNotFoundError{}
 	})
-	a.ClientsS3 = s3pkg.GetInstance()
+	a.ClientsS3 = s3ext.GetInstance()
 	a.ClientsS3.Init(s3.Options{
 		Region: configpkg.GetEnvValue("S3_REGION"),
 		// Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(config.GetEnvValue("S3_ACCESS_KEY"), config.GetEnvValue("S3_SECRET_KEY"), "")),
@@ -86,7 +86,7 @@ func (a *App) initS3() {
 		o.UsePathStyle = true
 	})
 	// tmp create bucket
-	/* s3pkg.CreateBucket(&s3.CreateBucketInput{
+	/* s3ext.CreateBucket(&s3.CreateBucketInput{
 		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
 	}, a.ClientsS3.S3Client, context.Background()) */
 }
@@ -94,8 +94,8 @@ func (a *App) initS3() {
 // initValidator initializes validator
 func (a *App) initValidator() {
 	a.Validate = validator.New()
-	validatorpkg.RegisterTagNameFunc(a.Validate)
-	_ = a.Validate.RegisterValidation("notempty", validatorpkg.NotEmpty)
+	validatorext.RegisterTagNameFunc(a.Validate)
+	_ = a.Validate.RegisterValidation("notempty", validatorext.NotEmpty)
 }
 
 // initModules initializes application modules

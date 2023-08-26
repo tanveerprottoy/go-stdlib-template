@@ -1,15 +1,13 @@
 package fileupload
 
-import (
-	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3pkg"
-)
+import "github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3ext"
 
 type Module struct {
 	Handler *Handler
 	Service *Service
 }
 
-func NewModule(clientsS3 *s3pkg.Clients) *Module {
+func NewModule(clientsS3 *s3ext.Clients) *Module {
 	m := new(Module)
 	// init order is reversed of the field decleration
 	// as the dependency is served this way
