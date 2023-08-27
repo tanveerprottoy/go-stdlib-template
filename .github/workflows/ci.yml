@@ -1,10 +1,11 @@
 name: stdlib-template
 
-on: push
+on: 
+    pull_request:
+        branches: [main]
 
 jobs:
-    stdlib-template:
-        name: stdlib-template
+    build:
         runs-on: ubuntu-latest
         steps:
             - name: Checkout code
