@@ -10,5 +10,5 @@ jobs:
         runs-on: ubuntu-latest
         steps:
             - name: dev-print
-              run: echo "Printing for dev branch push"
+              run: echo "A commit was pushed to dev branch"
               

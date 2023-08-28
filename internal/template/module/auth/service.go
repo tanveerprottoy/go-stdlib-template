@@ -1,9 +1,11 @@
 package auth
 
 import (
+	"context"
 	"errors"
 	"net/http"
 
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/entity"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/httpext"
@@ -27,7 +29,7 @@ func (s *Service) Authorize(r *http.Request) (entity.User, error) {
 		return e, err
 	}
 	tokenBody := splits[1]
-	claims, err := jwtext.VerifyToken(tokenBody)
+	claims, err := jwtext.VerifyToken1(tokenBody)
 	if err != nil {
 		return e, err
 	}
@@ -36,6 +38,8 @@ func (s *Service) Authorize(r *http.Request) (entity.User, error) {
 	if err != nil {
 		return e, err
 	}
+	ctx := context.WithValue(r.Context(), constant.KeyAuthUser, e)
+	_ = r.WithContext(ctx)
 	return e, nil
 }
 

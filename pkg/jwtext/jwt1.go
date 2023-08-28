@@ -9,10 +9,21 @@ import (
 )
 
 // Create the JWT key used to create the signature
-var JwtKey = []byte(config.GetEnvValue("secret"))
+var JwtKey1 = []byte(config.GetEnvValue("secret"))
+
+// jwt.RegisteredClaims is an embedded type
+type Payload struct {
+	Id string `json:"id"`
+}
+
+// jwt.RegisteredClaims is an embedded type
+type Claims struct {
+	Payload Payload `json:"payload"`
+	jwt.RegisteredClaims
+}
 
 // GenerateToken generates a new token
-func GenerateToken(payload map[string]any) string {
+func GenerateToken1(payload Payload) string {
 	/* RegisteredClaims: jwt.RegisteredClaims{
 		ExpiresAt: jwt.NewNumericDate(expirationTime),
 		IssuedAt:  jwt.NewNumericDate(datetime.Now()),
@@ -23,24 +34,26 @@ func GenerateToken(payload map[string]any) string {
 		Audience:  []string{"somebody_else"},
 	}, */
 	// Declare the expiration time of the token
-	// token := jwt.New(jwt.SigningMethodRS256)
-	claims := jwt.MapClaims{}
-	claims["exp"] = jwt.NewNumericDate(timeext.AddDate(0, 0, 3))
-	claims["authorized"] = true
-	claims["id"] = payload["id"]
+	expirationTime := timeext.AddDate(0, 0, 3)
+	claims := &Claims{
+		Payload: payload,
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(expirationTime),
+			Issuer:    "test",
+		},
+	}
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	tokenString, _ := token.SignedString(JwtKey)
 	return tokenString
 }
 
-func Parse(tokenBody string, claims jwt.MapClaims) (jwt.MapClaims, error) {
-	token, err := jwt.Parse(
+func VerifyToken1(tokenBody string) (*Claims, error) {
+	claims := &Claims{}
+	token, err := jwt.ParseWithClaims(
 		tokenBody,
-		func(t *jwt.Token) (interface{}, error) {
-			if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
-				return nil, errors.New("unexpected signing method")
-			}
-			return []byte(""), nil
+		claims,
+		func(token *jwt.Token) (interface{}, error) {
+			return JwtKey, nil
 		},
 	)
 	if err != nil {

@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"context"
 	"net/http"
 
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
@@ -22,13 +21,11 @@ func NewAuth(s *auth.Service) *Auth {
 // AuthUserMiddleWare auth user
 func (m *Auth) AuthUser(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		e, err := m.Service.Authorize(r)
+		_, err := m.Service.Authorize(r)
 		if err != nil {
 			response.RespondError(http.StatusForbidden, constant.Error, err, w)
 			return
 		}
-		ctx := context.WithValue(r.Context(), constant.KeyAuthUser, e)
-		req := r.WithContext(ctx)
-		next.ServeHTTP(w, req)
+		next.ServeHTTP(w, r)
 	})
 }

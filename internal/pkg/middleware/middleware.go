@@ -53,7 +53,7 @@ func JWTMiddleWare(next http.Handler) http.Handler {
 			return
 		}
 		tokenBody := split[1]
-		claims, err := jwtext.VerifyToken(tokenBody)
+		claims, err := jwtext.VerifyToken1(tokenBody)
 		if err != nil {
 			response.RespondError(http.StatusForbidden, "error", err, w)
 			return
