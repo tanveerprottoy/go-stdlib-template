@@ -33,7 +33,7 @@ func GenerateToken(payload map[string]any) string {
 	return tokenString
 }
 
-func Parse(tokenBody string, claims jwt.MapClaims) (jwt.MapClaims, error) {
+func Parse(tokenBody string) (*jwt.Token, error) {
 	token, err := jwt.Parse(
 		tokenBody,
 		func(t *jwt.Token) (interface{}, error) {
@@ -49,5 +49,5 @@ func Parse(tokenBody string, claims jwt.MapClaims) (jwt.MapClaims, error) {
 	if !token.Valid {
 		return nil, errors.New("invalid token")
 	}
-	return claims, nil
+	return token, nil
 }
