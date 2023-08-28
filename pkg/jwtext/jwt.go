@@ -40,7 +40,7 @@ func Parse(tokenBody string) (*jwt.Token, error) {
 			if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
 				return nil, errors.New("unexpected signing method")
 			}
-			return []byte(""), nil
+			return JwtKey, nil
 		},
 	)
 	if err != nil {
