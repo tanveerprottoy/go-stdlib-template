@@ -3,7 +3,7 @@ package jwtext
 import (
 	"errors"
 
-	"github.com/golang-jwt/jwt/v4"
+	"github.com/golang-jwt/jwt/v5"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/timeext"
 )

@@ -3,11 +3,12 @@ module github.com/tanveerprottoy/stdlib-go-template
 go 1.20
 
 require (
+	github.com/MicahParks/keyfunc/v2 v2.1.0
 	github.com/aws/aws-sdk-go-v2 v1.19.0
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.36.0
 	github.com/go-chi/chi v1.5.4
 	github.com/go-playground/validator/v10 v10.14.1
-	github.com/golang-jwt/jwt/v4 v4.5.0
+	github.com/golang-jwt/jwt/v5 v5.0.0
 	github.com/google/uuid v1.3.0
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/joho/godotenv v1.5.1
