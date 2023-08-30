@@ -29,7 +29,3 @@ func Sleep(d time.Duration) {
 func SecondMultiply(d time.Duration) time.Duration {
 	return time.Second * d
 }
-
-func Duration(d time.Duration) time.Duration {
-	return time.Duration(d)
-}

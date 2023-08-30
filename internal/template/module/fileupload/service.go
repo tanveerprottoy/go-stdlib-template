@@ -12,7 +12,6 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3ext"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/timeext"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/uuidext"
 )
 
@@ -132,7 +131,7 @@ func (s *Service) GetPresignedURLForOne(key string, ctx context.Context) (map[st
 		s.clientsS3.PresignClient,
 		ctx,
 		func(opts *s3.PresignOptions) {
-			opts.Expires = timeext.Duration(5 * time.Minute)
+			opts.Expires = time.Duration(5 * time.Minute)
 		},
 	)
 	if err != nil {
@@ -148,7 +147,7 @@ func (s *Service) PutPresignedURLForOne(key string, ctx context.Context) (map[st
 		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
 		Key:    aws.String(key),
 	}, s.clientsS3.PresignClient, ctx, func(o *s3.PresignOptions) {
-		o.Expires = timeext.Duration(2 * time.Minute)
+		o.Expires = time.Duration(2 * time.Minute)
 	})
 	if err != nil {
 		return m, err
