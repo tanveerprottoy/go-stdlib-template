@@ -32,5 +32,5 @@ func GetRBAC(path, method string) any {
 		// try with the value before the last one
 		return buildAndFindForKey(s, 2, method, "p")
 	}
-	return nil
+	return v
 }
