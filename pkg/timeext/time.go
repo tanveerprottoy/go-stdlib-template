@@ -29,3 +29,7 @@ func Sleep(d time.Duration) {
 func SecondMultiply(d time.Duration) time.Duration {
 	return time.Second * d
 }
+
+func MilliExpired(milli int64) bool {
+	return NowUnixMilli() > milli
+}
