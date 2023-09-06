@@ -3,10 +3,7 @@ package adapter
 import (
 	"errors"
 	"io"
-	"log"
-	"reflect"
 	"strconv"
-	"time"
 
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
 )
@@ -58,38 +55,4 @@ func StringToInt(s string) (int, error) {
 
 func StringToFloat(s string, bitSize int) (float64, error) {
 	return strconv.ParseFloat(s, bitSize)
-}
-
-// ValuesToStruct will set the values provided on the
-// struct provided in the param
-// caller must provide pointer addresses of values and t
-func ValuesToStruct[T any](values []any, obj T) {
-	v := reflect.Indirect(
-		reflect.ValueOf(obj).Elem(),
-	)
-	for i := 0; i < v.NumField(); i++ {
-		f := v.Field(i)
-		if f.CanSet() {
-			param := values[i]
-			switch f.Kind() {
-			case reflect.String:
-				f.SetString(
-					reflect.ValueOf(param).Elem().Interface().(string),
-				)
-			case reflect.Int32, reflect.Int64:
-				f.SetInt(reflect.ValueOf(param).Elem().Interface().(int64))
-			case reflect.Float32, reflect.Float64:
-				f.SetFloat(reflect.ValueOf(param).Elem().Interface().(float64))
-			case reflect.Bool:
-				f.SetBool(reflect.ValueOf(param).Elem().Interface().(bool))
-			case reflect.Struct:
-				// currently only handle time.Time type
-				f.Set(reflect.ValueOf(
-					reflect.ValueOf(param).Elem().Interface().(time.Time),
-				))
-			default:
-				log.Println("type unknown")
-			}
-		}
-	}
 }

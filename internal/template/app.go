@@ -24,21 +24,23 @@ import (
 	modulerouter "github.com/tanveerprottoy/stdlib-go-template/internal/template/router"
 	configpkg "github.com/tanveerprottoy/stdlib-go-template/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/httpext"
 )
 
 // App struct
 type App struct {
-	Server           *http.Server
-	idleConnsClosed  chan struct{}
-	DBClient         *sqlxpkg.Client
-	ClientsS3        *s3ext.Clients
-	router           *router.Router
-	Middlewares      []any
-	AuthModule       *auth.Module
-	UserModule       *user.Module
-	ContentModule    *content.Module
-	FileUploadModule *fileupload.Module
-	Validate         *validator.Validate
+	Server             *http.Server
+	idleConnsClosed    chan struct{}
+	DBClient           *sqlxpkg.Client
+	ClientsS3          *s3ext.Clients
+	HTTPClientProvider *httpext.ClientProvider
+	router             *router.Router
+	Middlewares        []any
+	AuthModule         *auth.Module
+	UserModule         *user.Module
+	ContentModule      *content.Module
+	FileUploadModule   *fileupload.Module
+	Validate           *validator.Validate
 }
 
 // NewApp creates App
@@ -89,6 +91,10 @@ func (a *App) initS3() {
 	/* s3ext.CreateBucket(&s3.CreateBucketInput{
 		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
 	}, a.ClientsS3.S3Client, context.Background()) */
+}
+
+func (a *App) initHTTPClientProvider() {
+	a.HTTPClientProvider = httpext.NewClientProvider(90*time.Second, nil, nil)
 }
 
 // initValidator initializes validator

@@ -26,7 +26,7 @@ func (s *Service) ReadOneInternal(id string) (entity.Content, error) {
 	return s.repository.ReadOne(id)
 }
 
-func (s *Service) Create(d *dto.CreateUpdateContentDTO, ctx context.Context) (entity.Content, *errorext.HTTPError) {
+func (s *Service) Create(d *dto.CreateUpdateContentDTO, ctx context.Context) (entity.Content, errorext.HTTPError) {
 	// convert dto to entity
 	b := entity.Content{}
 	b.Name = d.Name
@@ -37,10 +37,10 @@ func (s *Service) Create(d *dto.CreateUpdateContentDTO, ctx context.Context) (en
 	if err != nil {
 		return b, errorext.BuildDBError(err)
 	}
-	return b, nil
+	return b, errorext.HTTPError{}
 }
 
-func (s *Service) ReadMany(limit, page int, ctx context.Context) (map[string]any, *errorext.HTTPError) {
+func (s *Service) ReadMany(limit, page int, ctx context.Context) (map[string]any, errorext.HTTPError) {
 	m := make(map[string]any)
 	m["items"] = make([]entity.Content, 0)
 	m["limit"] = limit
@@ -51,18 +51,18 @@ func (s *Service) ReadMany(limit, page int, ctx context.Context) (map[string]any
 		return m, errorext.BuildDBError(err)
 	}
 	m["items"] = d
-	return m, nil
+	return m, errorext.HTTPError{}
 }
 
-func (s *Service) ReadOne(id string, ctx context.Context) (entity.Content, *errorext.HTTPError) {
+func (s *Service) ReadOne(id string, ctx context.Context) (entity.Content, errorext.HTTPError) {
 	b, err := s.ReadOneInternal(id)
 	if err != nil {
 		return b, errorext.BuildDBError(err)
 	}
-	return b, nil
+	return b, errorext.HTTPError{}
 }
 
-func (s *Service) Update(id string, d *dto.CreateUpdateContentDTO, ctx context.Context) (entity.Content, *errorext.HTTPError) {
+func (s *Service) Update(id string, d *dto.CreateUpdateContentDTO, ctx context.Context) (entity.Content, errorext.HTTPError) {
 	b, err := s.ReadOneInternal(id)
 	if err != nil {
 		return b, errorext.BuildDBError(err)
@@ -74,12 +74,12 @@ func (s *Service) Update(id string, d *dto.CreateUpdateContentDTO, ctx context.C
 		return b, errorext.BuildDBError(err)
 	}
 	if rows > 0 {
-		return b, nil
+		return b, errorext.HTTPError{}
 	}
-	return b, &errorext.HTTPError{Code: http.StatusBadRequest, Err: errorext.NewError(constant.OperationNotSuccess)}
+	return b, errorext.HTTPError{Code: http.StatusBadRequest, Err: errorext.NewError(constant.OperationNotSuccess)}
 }
 
-func (s *Service) Delete(id string, ctx context.Context) (entity.Content, *errorext.HTTPError) {
+func (s *Service) Delete(id string, ctx context.Context) (entity.Content, errorext.HTTPError) {
 	b, err := s.ReadOneInternal(id)
 	if err != nil {
 		return b, errorext.BuildDBError(err)
@@ -89,7 +89,7 @@ func (s *Service) Delete(id string, ctx context.Context) (entity.Content, *error
 		return b, errorext.BuildDBError(err)
 	}
 	if rows > 0 {
-		return b, nil
+		return b, errorext.HTTPError{}
 	}
-	return b, &errorext.HTTPError{Code: http.StatusBadRequest, Err: errorext.NewError(constant.OperationNotSuccess)}
+	return b, errorext.HTTPError{Code: http.StatusBadRequest, Err: errorext.NewError(constant.OperationNotSuccess)}
 }

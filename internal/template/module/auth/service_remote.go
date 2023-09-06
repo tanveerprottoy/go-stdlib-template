@@ -12,12 +12,12 @@ import (
 )
 
 type ServiceRemote struct {
-	HTTPClient *httpext.HTTPClient
+	ClientProvider *httpext.ClientProvider
 }
 
-func NewServiceRemote(c *httpext.HTTPClient) *ServiceRemote {
+func NewServiceRemote(c *httpext.ClientProvider) *ServiceRemote {
 	s := new(ServiceRemote)
-	s.HTTPClient = c
+	s.ClientProvider = c
 	return s
 }
 
@@ -27,15 +27,19 @@ func (s *ServiceRemote) Authorize(w http.ResponseWriter, r *http.Request) any {
 		response.RespondError(http.StatusForbidden, constant.Error, err, w)
 		return nil
 	}
-	u, err := httpext.Request[dto.AuthUserDTO](
+	u, httpErr, err := httpext.Request[dto.AuthUserDTO](
 		http.MethodPost,
 		fmt.Sprintf("%s%s", config.GetEnvValue("USER_SERVICE_BASE_URL"), constant.UserServiceAuthEndpoint),
 		r.Header,
 		nil,
-		s.HTTPClient,
+		s.ClientProvider,
 	)
 	if err != nil {
 		response.RespondError(http.StatusForbidden, constant.Error, err, w)
+		return nil
+	}
+	if httpErr != nil {
+		response.RespondError(http.StatusForbidden, constant.Error, httpErr, w)
 		return nil
 	}
 	return u

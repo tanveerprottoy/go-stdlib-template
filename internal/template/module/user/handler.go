@@ -60,7 +60,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	ctx := r.Context()
 	e, httpErr := h.service.Create(&d, ctx)
-	if httpErr != nil {
+	if httpErr.Err != nil {
 		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
 		return
 	}
@@ -88,7 +88,7 @@ func (h *Handler) ReadMany(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	e, httpErr := h.service.ReadMany(limit, page, nil)
-	if httpErr != nil {
+	if httpErr.Err != nil {
 		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
 		return
 	}
@@ -98,7 +98,7 @@ func (h *Handler) ReadMany(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) ReadOne(w http.ResponseWriter, r *http.Request) {
 	id := httpext.GetURLParam(r, constant.KeyId)
 	e, httpErr := h.service.ReadOne(id, nil)
-	if httpErr != nil {
+	if httpErr.Err != nil {
 		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
 		return
 	}
@@ -113,7 +113,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	e, httpErr := h.service.Update(id, &d, nil)
-	if httpErr != nil {
+	if httpErr.Err != nil {
 		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
 		return
 	}
@@ -123,7 +123,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 func (h *Handler) Delete(w http.ResponseWriter, r *http.Request) {
 	id := httpext.GetURLParam(r, constant.KeyId)
 	e, httpErr := h.service.Delete(id, nil)
-	if httpErr != nil {
+	if httpErr.Err != nil {
 		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
 		return
 	}
