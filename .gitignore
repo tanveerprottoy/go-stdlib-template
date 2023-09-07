@@ -48,3 +48,6 @@ log/
 tmp/
 
 uploads
+
+# embedded files
+config/embedded/*.json
