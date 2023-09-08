@@ -32,6 +32,28 @@ func ParseValidateRequestBody(r io.ReadCloser, v any, validate *validator.Valida
 	return validationErrs, err
 }
 
+// ParseValidateRequestBody parses and validates the request body
+// The caller must pass the address for the v any param, ex: &v
+func ParseValidateRequestBody1(r io.ReadCloser, v any, validate *validator.Validate) ([]string, error) {
+	defer r.Close()
+	var validationErrs []string
+	err := jsonext.Decode(r, v)
+	if err != nil {
+		return nil, err
+	}
+	// validate request body
+	err = validate.Struct(v)
+	if err != nil {
+		// Struct is invalid
+		var msg string
+		for _, err := range err.(validator.ValidationErrors) {
+			msg = err.Field() + " " + err.Tag()
+			validationErrs = append(validationErrs, msg)
+		}
+	}
+	return validationErrs, err
+}
+
 // RegisterTagNameFunc configures validator to use
 // defined json name to use as struct field name
 func RegisterTagNameFunc(validate *validator.Validate) {
