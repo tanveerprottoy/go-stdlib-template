@@ -2,5 +2,5 @@ package embedded
 
 import _ "embed"
 
-//go:embed dev.json
+//go:embed configs.json
 var Contents []byte
