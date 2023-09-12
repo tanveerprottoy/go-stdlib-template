@@ -1,5 +1,7 @@
 package constant
 
+import "github.com/tanveerprottoy/stdlib-go-template/internal/pkg/types"
+
 const ApiPattern = "/api"
 const RootPattern = "/"
 const V1 = "/v1"
@@ -19,12 +21,14 @@ const OperationNotSuccess = "operation was not successful"
 const Error = "error"
 const Errors = "errors"
 
-// keys
-const KeyAuthUser = "AuthUser"
+// basic keys
 const KeyId = "id"
 const KeyPage = "page"
 const KeyLimit = "limit"
-const KeyRBAC = "rbac"
+
+// context keys
+const KeyAuthUser types.KeyContext = "AuthUser"
+const KeyRBAC types.KeyContext = "rbac"
 
 // remote userservice auth endpoint
 const UserServiceAuthEndpoint = "/api/v2/auth/get-user"
