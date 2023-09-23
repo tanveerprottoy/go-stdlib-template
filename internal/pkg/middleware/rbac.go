@@ -54,7 +54,7 @@ func (r *RBAC) AuthRole(next http.Handler) http.Handler {
 		}
 		d = d.(rbac.RBACModel)
 		fmt.Println("GetRBAC: ", d)
-		e, err := r.Service.AuthorizeForRole1(request)
+		e, err := r.Service.AuthorizeForRoleBasic(request)
 		if err != nil {
 			response.RespondError(http.StatusForbidden, constant.Error, err.Error(), writer)
 			return

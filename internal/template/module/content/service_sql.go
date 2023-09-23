@@ -90,7 +90,7 @@ func (s *ServiceSQL) Delete(id string, ctx context.Context) (entity.Content, err
 	if httpErr.Err != nil {
 		return b, errorext.BuildDBError(httpErr.Err)
 	}
-	rows, err := s.repository.Delete(id)
+	rows, err := s.repository.Delete(id, ctx)
 	if err != nil {
 		return b, errorext.BuildDBError(err)
 	}

@@ -68,7 +68,7 @@ func (s *Service) Authorize(r *http.Request) (*http.Request, error) {
 	// return r.WithContext(ctx), nil
 }
 
-func (s *Service) Authorize1(r *http.Request) (entity.User, error) {
+func (s *Service) AuthorizeBasic(r *http.Request) (entity.User, error) {
 	var e entity.User
 	splits, err := httpext.ParseAuthToken(r)
 	if err != nil {
@@ -89,7 +89,7 @@ func (s *Service) Authorize1(r *http.Request) (entity.User, error) {
 	return e, nil
 }
 
-func (s *Service) AuthorizeForRole1(r *http.Request) (entity.User, error) {
+func (s *Service) AuthorizeForRoleBasic(r *http.Request) (entity.User, error) {
 	var e entity.User
 	role := r.Header.Get("role")
 	if role == "" {

@@ -57,17 +57,24 @@ func GetInstanceAtomic() *Client {
 }
 
 func (d *Client) init() {
-	args := fmt.Sprintf(
+	dbURI := fmt.Sprintf(
 		"host=%s port=%s user=%s "+
-			"password=%s dbname=%s sslmode=disable",
-		config.GetEnvValue("DB_HOST"),
-		config.GetEnvValue("DB_PORT"),
-		config.GetEnvValue("DB_USER"),
-		config.GetEnvValue("DB_PASS"),
-		config.GetEnvValue("DB_NAME"),
+			"password=%s dbname=%s",
+		config.GetJsonValue("dbHost"),
+		config.GetJsonValue("dbPort"),
+		config.GetJsonValue("dbUsername"),
+		config.GetJsonValue("dbPass"),
+		config.GetJsonValue("dbName"),
 	)
+	dbRootCert := config.GetJsonValue("dbRootCert")
+	if dbRootCert != nil {
+		dbURI += fmt.Sprintf(" sslmode=require sslrootcert=%s sslcert=%s sslkey=%s",
+			dbRootCert.(string), config.GetJsonValue("dbCert").(string), config.GetJsonValue("dbKey").(string))
+	} else {
+		dbURI += " sslmode=disable"
+	}
 	var err error
-	d.DB, err = sql.Open("postgres", args)
+	d.DB, err = sql.Open("postgres", dbURI)
 	if err != nil {
 		panic(err)
 	}

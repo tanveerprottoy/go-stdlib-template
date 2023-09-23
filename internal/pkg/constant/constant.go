@@ -17,6 +17,7 @@ const InternalServerError = "internal server error"
 const BadRequest = "bad request"
 const Unauthorized = "unauthorized"
 const OperationNotSuccess = "operation was not successful"
+const InvalidRequestBody = "invalid request body"
 
 const Error = "error"
 const Errors = "errors"
@@ -30,6 +31,7 @@ const KeyLimit = "limit"
 const KeyAuthData types.KeyContext = "AuthData"
 const KeyAuthUser types.KeyContext = "AuthUser"
 const KeyRBAC types.KeyContext = "rbac"
+const KeyNowMilli types.KeyContext = "nowMilli"
 
 // remote userservice auth endpoint
 const UserServiceAuthEndpoint = "/api/v2/auth/get-user"
@@ -39,3 +41,6 @@ const AuthUser = "authUser"
 const AuthRole = "authRole"
 
 const RBACError = "rbac error"
+
+// lat lng
+const InvalidLatLng = 300

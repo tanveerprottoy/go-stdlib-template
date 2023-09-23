@@ -1,6 +1,9 @@
 package postgres
 
-import "database/sql"
+import (
+	"context"
+	"database/sql"
+)
 
 type Repository[T any] interface {
 	Create(e *T) (string, error)
@@ -11,5 +14,9 @@ type Repository[T any] interface {
 
 	Update(id string, e *T) (int64, error)
 
-	Delete(id string) (int64, error)
+	Delete(id string, ctx context.Context) (int64, error)
+
+	DB() *sql.DB
+
+	// TableName() string
 }

@@ -7,16 +7,23 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 )
 
-type Response[T any] struct {
+type Response struct {
 	Data any `json:"data"`
+}
+
+type ReadManyResponse[T any] struct {
+	Items []T `json:"items"`
+	Limit int `json:"limit"`
+	Page  int `json:"page"`
+	Total int `json:"total"`
 }
 
 func writeResponse(w http.ResponseWriter, b []byte) (int, error) {
 	return w.Write(b)
 }
 
-func BuildData[T any](payload T) *Response[T] {
-	return &Response[T]{Data: payload}
+func BuildData(payload any) Response {
+	return Response{Data: payload}
 }
 
 func Respond(code int, payload any, w http.ResponseWriter) {

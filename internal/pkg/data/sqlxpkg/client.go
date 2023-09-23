@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"sync/atomic"
 
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -11,8 +12,10 @@ import (
 )
 
 var (
-	instance *Client
-	once     sync.Once
+	instance    *Client
+	once        sync.Once
+	mu          sync.Mutex
+	initialized uint32
 )
 
 type Client struct {
@@ -24,6 +27,32 @@ func GetInstance() *Client {
 		instance = new(Client)
 		instance.init()
 	})
+	return instance
+}
+
+func GetInstanceMutex() *Client {
+	if instance == nil {
+		mu.Lock()
+		defer mu.Unlock()
+		if instance == nil {
+			instance = new(Client)
+			instance.init()
+		}
+	}
+	return instance
+}
+
+func GetInstanceAtomic() *Client {
+	if atomic.LoadUint32(&initialized) == 1 {
+		return instance
+	}
+	mu.Lock()
+	defer mu.Unlock()
+	if initialized == 0 {
+		instance = new(Client)
+		instance.init()
+		atomic.StoreUint32(&initialized, 1)
+	}
 	return instance
 }
 

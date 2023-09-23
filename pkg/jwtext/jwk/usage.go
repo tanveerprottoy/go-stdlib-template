@@ -2,13 +2,14 @@ package jwk
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
 )
 
 func Usage() error {
 	jwksURL := fmt.Sprintf("%s/.well-known/jwks", config.GetEnvValue("jwkDomain"))
-	jwks, err := CreateJWKS(jwksURL)
+	jwks, err := CreateJWKS(jwksURL, 24*time.Hour, nil)
 	if err != nil {
 		return err
 	}
