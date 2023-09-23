@@ -23,6 +23,18 @@ func NewRBAC(s *auth.Service) *RBAC {
 	return m
 }
 
+// Authorize handles authorization for a request
+func (a *Auth) Authorize(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		r, err := a.Service.Authorize(r)
+		if err != nil {
+			response.RespondError(http.StatusForbidden, constant.Errors, []string{err.Error()}, w)
+			return
+		}
+		next.ServeHTTP(w, r)
+	})
+}
+
 // AuthUserMiddleWare auth user
 func (r *RBAC) AuthRole(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
@@ -42,7 +54,7 @@ func (r *RBAC) AuthRole(next http.Handler) http.Handler {
 		}
 		d = d.(rbac.RBACModel)
 		fmt.Println("GetRBAC: ", d)
-		e, err := r.Service.AuthorizeForRole(request)
+		e, err := r.Service.AuthorizeForRole1(request)
 		if err != nil {
 			response.RespondError(http.StatusForbidden, constant.Error, err.Error(), writer)
 			return

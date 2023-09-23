@@ -27,8 +27,15 @@ const KeyPage = "page"
 const KeyLimit = "limit"
 
 // context keys
+const KeyAuthData types.KeyContext = "AuthData"
 const KeyAuthUser types.KeyContext = "AuthUser"
 const KeyRBAC types.KeyContext = "rbac"
 
 // remote userservice auth endpoint
 const UserServiceAuthEndpoint = "/api/v2/auth/get-user"
+
+// auth data keys
+const AuthUser = "authUser"
+const AuthRole = "authRole"
+
+const RBACError = "rbac error"

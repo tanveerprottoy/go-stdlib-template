@@ -2,6 +2,7 @@ package jwtext
 
 import (
 	"errors"
+	"log"
 
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
@@ -50,4 +51,13 @@ func Parse(tokenBody string) (*jwt.Token, error) {
 		return nil, errors.New("invalid token")
 	}
 	return token, nil
+}
+
+func ParseClaims(token *jwt.Token) jwt.MapClaims {
+	if claims, ok := token.Claims.(jwt.MapClaims); ok {
+		return claims
+	} else {
+		log.Printf("Invalid JWT Token")
+		return nil
+	}
 }

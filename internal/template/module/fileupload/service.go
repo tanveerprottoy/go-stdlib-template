@@ -9,10 +9,10 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
+	"github.com/google/uuid"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3ext"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/uuidext"
 )
 
 type Service struct {
@@ -78,7 +78,7 @@ func (s *Service) UploadOne(r *http.Request) (map[string]string, error) {
 
 func (s *Service) UploadOneDisk(r *http.Request) (map[string]string, error) {
 	m := map[string]string{"path": ""}
-	path, err := s.retrieveSaveFile("file", "./uploads", uuidext.NewUUIDStr(), r)
+	path, err := s.retrieveSaveFile("file", "./uploads", uuid.NewString(), r)
 	if err != nil {
 		return m, err
 	}
@@ -101,7 +101,7 @@ func (s *Service) UploadManyDisk(r *http.Request) (map[string][]string, error) {
 		if err != nil {
 			return m, err
 		}
-		p, err := multipart.SaveFile(f, fh, "./uploads", uuidext.NewUUIDStr(), r)
+		p, err := multipart.SaveFile(f, fh, "./uploads", uuid.NewString(), r)
 		if err != nil {
 			return m, err
 		}
@@ -113,7 +113,7 @@ func (s *Service) UploadManyDisk(r *http.Request) (map[string][]string, error) {
 
 func (s *Service) UploadManyWithKeysDisk(r *http.Request) (map[string][]string, error) {
 	m := map[string][]string{"paths": {""}}
-	paths, err := s.handleFilesForKeys([]string{"image0", "image1"}, "./uploads", []string{uuidext.NewUUIDStr(), uuidext.NewUUIDStr()}, r)
+	paths, err := s.handleFilesForKeys([]string{"image0", "image1"}, "./uploads", []string{uuid.NewString(), uuid.NewString()}, r)
 	if err != nil {
 		return m, err
 	}

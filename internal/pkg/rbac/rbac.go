@@ -2,7 +2,9 @@ package rbac
 
 import (
 	"fmt"
+	"net/url"
 
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/uuidext"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/stringsext"
 )
 
@@ -33,4 +35,28 @@ func GetRBAC(path, method string) any {
 		return buildAndFindForKey(s, 2, method, "p")
 	}
 	return v
+}
+
+// BuildKey builds the mapping key with action
+func BuildKey(url *url.URL, method string) string {
+	s := stringsext.Split(url.Path, "/")
+	// get the last elements
+	paths := s[3:]
+	var k string
+	// var builder strings.Builder
+	for i, path := range paths {
+		// if first element if not add a "."
+		if i > 0 {
+			k = k + "."
+		}
+		isUUID := uuidext.IsValidUUID(path)
+		if isUUID {
+			// replace uuid with p
+			k = k + "p"
+		} else {
+			k = k + path
+		}
+	}
+	k = k + "." + method
+	return k	
 }

@@ -2,11 +2,13 @@ package httpext
 
 import (
 	"errors"
+	"io"
 	"net/http"
 	"net/url"
 	"strings"
 
 	"github.com/go-chi/chi"
+	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
 )
 
 func GetURLParam(r *http.Request, key string) string {
@@ -29,6 +31,17 @@ func ParseAuthToken(r *http.Request) ([]string, error) {
 		return nil, errors.New("token format is invalid")
 	}
 	return splits, nil
+}
+
+// ParseRequestBody parses the request body
+// The caller must pass the address for the v any param, ex: &v
+func ParseRequestBody(r io.ReadCloser, v any) error {
+	defer r.Close()
+	err := jsonext.Decode(r, v)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func BuildURL(base, path string, queriesMap map[string]string) (string, error) {

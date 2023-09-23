@@ -1,6 +1,7 @@
 package adapter
 
 import (
+	"encoding/json"
 	"errors"
 	"io"
 	"strconv"
@@ -15,7 +16,7 @@ func IOReaderToBytes(r io.Reader) ([]byte, error) {
 
 func BytesToType[T any](b []byte) (*T, error) {
 	var out T
-	err := jsonext.Unmarshal(b, &out)
+	err := json.Unmarshal(b, &out)
 	return &out, err
 }
 
@@ -30,11 +31,11 @@ func BodyToType[T any](r io.ReadCloser) (*T, error) {
 
 func AnyToType[T any](v any) (*T, error) {
 	var out T
-	b, err := jsonext.Marshal(v)
+	b, err := json.Marshal(v)
 	if err != nil {
 		return nil, err
 	}
-	err = jsonext.Unmarshal(b, &out)
+	err = json.Unmarshal(b, &out)
 	if err != nil {
 		return nil, err
 	}

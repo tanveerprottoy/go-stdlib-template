@@ -6,6 +6,10 @@ func Now() time.Time {
 	return time.Now()
 }
 
+func NowUnix() int64 {
+	return time.Now().Unix()
+}
+
 func NowUnixMilli() int64 {
 	return time.Now().UnixMilli()
 }
@@ -30,6 +34,10 @@ func SecondMultiply(d time.Duration) time.Duration {
 	return time.Second * d
 }
 
-func MilliExpired(milli int64) bool {
-	return NowUnixMilli() > milli
+func SecondsExpired(seconds int64) bool {
+	return NowUnix() > seconds
+}
+
+func MillisExpired(millis int64) bool {
+	return NowUnixMilli() > millis
 }

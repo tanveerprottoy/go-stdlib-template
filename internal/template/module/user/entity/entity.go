@@ -1,16 +1,16 @@
 package entity
 
 type User struct {
-	Id            string            `db:"id" json:"id"`
-	Name          string            `db:"name" json:"name"`
-	Role          string            `db:"role" json:"role"`
+	ID   string `db:"id" json:"id"`
+	Name string `db:"name" json:"name"`
+	Role string `db:"role" json:"role"`
 	/* Email         string            `db:"email" json:"email"`
 	Age           uint8             `db:"age" json:"age"`
 	Phone         string            `db:"phone" json:"phone"`
 	FavoriteColor string            `db:"favorite_color" json:"favoriteColor"`
 	Addresses     []*UserAddressDTO `db:"addresses" json:"addresses"` */
-	CreatedAt     int64             `db:"created_at" json:"createdAt"`
-	UpdatedAt     int64             `db:"updated_at" json:"updatedAt"`
+	CreatedAt int64 `db:"created_at" json:"createdAt"`
+	UpdatedAt int64 `db:"updated_at" json:"updatedAt"`
 }
 
 // Address houses a users address information

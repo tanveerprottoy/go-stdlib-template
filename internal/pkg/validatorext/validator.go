@@ -6,35 +6,29 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorext"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
 )
 
-// ParseValidateRequestBody parses and validates the request body
-// The caller must pass the address for the v any param, ex: &v
-func ParseValidateRequestBody(r io.ReadCloser, v any, validate *validator.Validate) ([]errorext.ValidationError, error) {
-	defer r.Close()
-	var validationErrs []errorext.ValidationError
-	err := jsonext.Decode(r, v)
-	if err != nil {
-		return nil, err
-	}
+// ValidateStruct parses and validates the request body
+// The caller must pass the address for the param v, ex: &v
+func ValidateStruct(v any, validate *validator.Validate) []string {
+	var validationErrs []string
 	// validate request body
-	err = validate.Struct(v)
+	err := validate.Struct(v)
 	if err != nil {
 		// Struct is invalid
-		var v errorext.ValidationError
+		var msg string
 		for _, err := range err.(validator.ValidationErrors) {
-			v.Message = err.Field() + " " + err.Tag()
-			validationErrs = append(validationErrs, v)
+			msg = err.Field() + " " + err.Tag()
+			validationErrs = append(validationErrs, msg)
 		}
 	}
-	return validationErrs, err
+	return validationErrs
 }
 
 // ParseValidateRequestBody parses and validates the request body
 // The caller must pass the address for the v any param, ex: &v
-func ParseValidateRequestBody1(r io.ReadCloser, v any, validate *validator.Validate) ([]string, error) {
+func ParseValidateRequestBody(r io.ReadCloser, v any, validate *validator.Validate) ([]string, error) {
 	defer r.Close()
 	var validationErrs []string
 	err := jsonext.Decode(r, v)
