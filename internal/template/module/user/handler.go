@@ -1,7 +1,6 @@
 package user
 
 import (
-	"fmt"
 	"net/http"
 
 	"github.com/go-playground/validator/v10"
@@ -11,7 +10,6 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/adapter"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/httpext"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
 )
 
 // Hanlder is responsible for extracting data
@@ -28,38 +26,22 @@ func NewHandler(s *Service, v *validator.Validate) *Handler {
 	return h
 }
 
-func (h *Handler) parseValidateRequestBody(r *http.Request) (dto.CreateUpdateUserDTO, error) {
-	var d dto.CreateUpdateUserDTO
-	defer r.Body.Close()
-	err := jsonext.Decode(r.Body, &d)
-	if err != nil {
-		return d, err
-	}
-	// validate request body
-	err = h.validate.Struct(d)
-	if err != nil {
-		// Struct is invalid
-		for _, err := range err.(validator.ValidationErrors) {
-			fmt.Println(err.Field(), err.Tag())
-		}
-	}
-	return d, err
-}
-
 func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
-	// d, err := h.parseValidateRequestBody(r)
-	var d dto.CreateUpdateUserDTO
-	validationErrs, err := validatorext.ParseValidateRequestBody(r.Body, &d, h.validate)
+	var v dto.CreateUpdateUserDTO
+	// parse the request body
+	err := httpext.ParseRequestBody(r.Body, &v)
+	if err != nil {
+		response.RespondError(http.StatusBadRequest, constant.Errors, []string{constant.InvalidRequestBody}, w)
+		return
+	}
+	// validate the request body
+	validationErrs := validatorext.ValidateStruct(&v, h.validate)
 	if validationErrs != nil {
 		response.RespondError(http.StatusBadRequest, constant.Errors, validationErrs, w)
 		return
 	}
-	if err != nil {
-		response.RespondError(http.StatusBadRequest, constant.Error, err.Error(), w)
-		return
-	}
 	ctx := r.Context()
-	e, httpErr := h.service.Create(&d, ctx)
+	e, httpErr := h.service.Create(&v, ctx)
 	if httpErr.Err != nil {
 		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
 		return
@@ -107,12 +89,20 @@ func (h *Handler) ReadOne(w http.ResponseWriter, r *http.Request) {
 
 func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 	id := httpext.GetURLParam(r, constant.KeyId)
-	d, err := h.parseValidateRequestBody(r)
+	var v dto.CreateUpdateUserDTO
+	// parse the request body
+	err := httpext.ParseRequestBody(r.Body, &v)
 	if err != nil {
-		response.RespondError(http.StatusBadRequest, constant.Errors, err, w)
+		response.RespondError(http.StatusBadRequest, constant.Errors, []string{constant.InvalidRequestBody}, w)
 		return
 	}
-	e, httpErr := h.service.Update(id, &d, nil)
+	// validate the request body
+	validationErrs := validatorext.ValidateStruct(&v, h.validate)
+	if validationErrs != nil {
+		response.RespondError(http.StatusBadRequest, constant.Errors, validationErrs, w)
+		return
+	}
+	e, httpErr := h.service.Update(id, &v, nil)
 	if httpErr.Err != nil {
 		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
 		return

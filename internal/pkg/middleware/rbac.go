@@ -14,24 +14,26 @@ import (
 
 // RBAC Role Based Access Control middleware
 type RBAC struct {
-	Service *auth.Service
+	service *auth.Service
 }
 
 func NewRBAC(s *auth.Service) *RBAC {
 	m := new(RBAC)
-	m.Service = s
+	m.service = s
 	return m
 }
 
 // Authorize handles authorization for a request
-func (a *Auth) Authorize(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		r, err := a.Service.Authorize(r)
+func (r *RBAC) Authorize(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(writer http.ResponseWriter, request *http.Request) {
+		e, err := r.service.AuthorizeForRoleBasic(request)
 		if err != nil {
-			response.RespondError(http.StatusForbidden, constant.Errors, []string{err.Error()}, w)
+			response.RespondError(http.StatusForbidden, constant.Error, err.Error(), writer)
 			return
 		}
-		next.ServeHTTP(w, r)
+		ctx := context.WithValue(request.Context(), constant.KeyAuthUser, e)
+		_ = request.WithContext(ctx)
+		next.ServeHTTP(writer, request)
 	})
 }
 
@@ -54,7 +56,7 @@ func (r *RBAC) AuthRole(next http.Handler) http.Handler {
 		}
 		d = d.(rbac.RBACModel)
 		fmt.Println("GetRBAC: ", d)
-		e, err := r.Service.AuthorizeForRoleBasic(request)
+		e, err := r.service.AuthorizeForRoleBasic(request)
 		if err != nil {
 			response.RespondError(http.StatusForbidden, constant.Error, err.Error(), writer)
 			return
