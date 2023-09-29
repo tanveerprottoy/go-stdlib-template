@@ -91,7 +91,7 @@ func (h *Handler) UploadManyWithKeysDisk(w http.ResponseWriter, r *http.Request)
 }
 
 func (h *Handler) PutPresignedURLForOne(w http.ResponseWriter, r *http.Request) {
-	var v dto.CreateUpdatePresignedDTO
+	var v dto.CreatePresignedDTO
 	defer r.Body.Close()
 	err := jsonext.Decode(r.Body, &v)
 	if err != nil {

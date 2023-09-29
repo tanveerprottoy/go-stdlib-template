@@ -1,5 +1,5 @@
 package dto
 
-type CreateUpdatePresignedDTO struct {
+type CreatePresignedDTO struct {
 	Key string `json:"key" validate:"required"`
 }
