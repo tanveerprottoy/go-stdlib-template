@@ -1,7 +1,10 @@
 package user
 
 import (
+	"context"
+
 	"github.com/jmoiron/sqlx"
+	"github.com/lib/pq"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/sqlxpkg"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/entity"
 )
@@ -62,4 +65,33 @@ func (r *Repository[T]) Delete(id string) (int64, error) {
 		return -1, err
 	}
 	return sqlxpkg.GetRowsAffected(res), nil
+}
+
+func (r *Repository[T]) createMany(entities []entity.User, ctx context.Context) error {
+	txn, err := r.db.Begin()
+	if err != nil {
+		return err
+	}
+	stmt, err := txn.Prepare(pq.CopyIn(TableName, "name", "created_at", "updated_at"))
+	if err != nil {
+		return (err)
+	}
+	// close the statement when done
+	defer stmt.Close()
+	for _, e := range entities {
+		_, err := stmt.Exec(e.Name, e.CreatedAt, e.UpdatedAt)
+		if err != nil {
+			txn.Rollback()
+			return err
+		}
+	}
+	_, err = stmt.Exec()
+	if err != nil {
+		return err
+	}
+	err = txn.Commit()
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -89,10 +89,12 @@ func (d *Client) init() {
 	if err != nil {
 		panic(err)
 	}
-	// ping is necessary to create connection
-	err = d.DB.Ping()
-	if err != nil {
-		panic(err)
-	}
+	// Ping the database to verify DSN is valid and the
+	// server is accessible
+	ping(context.Background())
 	log.Println("Successfully connected!")
+	/* db.SetMaxIdleConns(5)
+	db.SetMaxOpenConns(10) */
+	stat := db.Stats()
+	log.Printf("DB.stats: idle=%d, inUse=%d,  maxOpen=%d", stat.Idle, stat.InUse, stat.MaxOpenConnections)
 }

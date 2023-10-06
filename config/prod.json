@@ -4,5 +4,6 @@
     "dbHost": "localhost",
     "dbUsername": "postgres",
     "dbPass": "root",
-    "dbName": "basic_db"
+    "dbName": "basic_db",
+    "dbSslMode": "disable"
 }

@@ -17,6 +17,4 @@ type Repository[T any] interface {
 	Delete(id string, ctx context.Context) (int64, error)
 
 	DB() *sql.DB
-
-	// TableName() string
 }
