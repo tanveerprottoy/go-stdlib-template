@@ -34,7 +34,7 @@ func (s *Service) Authorize(r *http.Request) (entity.User, error) {
 		return e, err
 	}
 	// find user
-	e, err = s.userService.ReadOneInternal(claims.Payload.Id)
+	e, err = s.userService.ReadOneInternal(claims.Payload.Id, r.Context())
 	if err != nil {
 		return e, err
 	}
@@ -51,7 +51,7 @@ func (s *Service) AuthorizeForRoleBasic(r *http.Request) (entity.User, error) {
 		return e, errors.New("role is missing")
 	}
 	// find user
-	e, err := s.userService.ReadOneInternal(r.Header.Get("id"))
+	e, err := s.userService.ReadOneInternal(r.Header.Get("id"), r.Context())
 	if err != nil {
 		return e, err
 	}

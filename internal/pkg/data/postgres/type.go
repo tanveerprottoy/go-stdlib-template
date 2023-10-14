@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/jackc/pgx/v5/pgtype"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/stringsext"
 )
@@ -160,6 +161,34 @@ type Point struct {
 }
 
 // Scan implements the Scanner interface for Point
+func (p *Point) parseValue(s string) error {
+	// Unmarshalling into a pointer will let us detect null
+	// need to manipulate the supplied value as it is a base64 encoded string
+	// remove parentheses from the string
+	s = s[1 : len(s)-1]
+	// alternatively, we could use a regex to remove the parentheses
+	// re := regexp.MustCompile(`\(([^)]+)\)`)
+	// d = re.ReplaceAllString(string(bytes), "$1")
+	// split the string by comma
+	splits := stringsext.Split(s, ",")
+	// first one is the longitude
+	lngStr := splits[0]
+	// second one is the latitude
+	latStr := splits[1]
+	lng, err := strconv.ParseFloat(lngStr, 64)
+	if err != nil {
+		return err
+	}
+	lat, err := strconv.ParseFloat(latStr, 64)
+	if err != nil {
+		return err
+	}
+	p.Lng = lng
+	p.Lat = lat
+	return nil
+}
+
+// Scan implements the Scanner interface for Point
 func (p *Point) Scan(val any) error {
 	// assume lat lng is not given
 	p.Lat = constant.InvalidLatLng
@@ -170,31 +199,9 @@ func (p *Point) Scan(val any) error {
 	}
 	switch v := val.(type) {
 	case []byte:
-		// Unmarshalling into a pointer will let us detect null
-		// need to manipulate the supplied value as it is a base64 encoded string
-		s := string(v)
-		// remove parentheses from the string
-		s = s[1 : len(s)-1]
-		// alternatively, we could use a regex to remove the parentheses
-		// re := regexp.MustCompile(`\(([^)]+)\)`)
-		// d = re.ReplaceAllString(string(bytes), "$1")
-		// split the string by comma
-		splits := stringsext.Split(s, ",")
-		// first one is the longitude
-		lngStr := splits[0]
-		// second one is the latitude
-		latStr := splits[1]
-		lng, err := strconv.ParseFloat(lngStr, 64)
-		if err != nil {
-			return err
-		}
-		lat, err := strconv.ParseFloat(latStr, 64)
-		if err != nil {
-			return err
-		}
-		p.Lng = lng
-		p.Lat = lat
-		return nil
+		return p.parseValue(string(v))
+	case string:
+		return p.parseValue(v)
 	}
 	return fmt.Errorf("unsupported Scan, storing driver.Value type %T into type *UInt", val)
 }
@@ -249,28 +256,9 @@ type JsonObject map[string]any
 // Scan implements the Scanner interface for JsonObject
 func (j *JsonObject) Scan(val any) error {
 	var jsonObj map[string]any
-	switch v := val.(type) {
-	case []byte:
-		err := json.Unmarshal(v, &jsonObj)
-		if err != nil {
-			return err
-		}
-		*j = jsonObj
-		return nil
+	if val == nil {
+		j = nil		
 	}
-	return fmt.Errorf("unsupported Scan, storing driver.Value type %T into type *UInt", val)
-}
-
-// JsonTokenObject is a type for DB json array type
-type JsonTokenObject struct {
-	ExpiresIn   int64  `json:"expiresIn"`
-	GeneratedAt int64  `json:"generatedAt"`
-	Token       string `json:"token"`
-}
-
-// Scan implements the Scanner interface for JsonTokenObject
-func (j *JsonTokenObject) Scan(val any) error {
-	var jsonObj JsonTokenObject
 	switch v := val.(type) {
 	case []byte:
 		err := json.Unmarshal(v, &jsonObj)
@@ -317,4 +305,12 @@ func (j *Json2dArray) Scan(val any) error {
 		return nil
 	}
 	return fmt.Errorf("unsupported Scan, storing driver.Value type %T into type *UInt", val)
+}
+
+type PGArray[T any] struct {
+	pgtype.Array[T]
+}
+
+func MakePGArray[T any](arr []T, valid bool) PGArray[T] {
+	return PGArray[T]{pgtype.Array[T]{Elements: arr, Valid: valid}}
 }

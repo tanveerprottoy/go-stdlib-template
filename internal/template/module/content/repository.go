@@ -5,11 +5,10 @@ import (
 
 	"github.com/jmoiron/sqlx"
 	"github.com/lib/pq"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/sqlxpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/postgres"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/sqlxext"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/entity"
 )
-
-const TableName = "contents"
 
 type Repository[T entity.Content] struct {
 	db *sqlx.DB
@@ -21,9 +20,10 @@ func NewRepository(db *sqlx.DB) *Repository[entity.Content] {
 	return r
 }
 
-func (r *Repository[T]) Create(e *entity.Content) error {
+func (r *Repository[T]) Create(e entity.Content, ctx context.Context) error {
 	var lastId string
-	err := r.db.QueryRow("INSERT INTO "+TableName+" (name, created_at, updated_at) VALUES ($1, $2, $3) RETURNING id", e.Name, e.CreatedAt, e.UpdatedAt).Scan(&lastId)
+	q := postgres.BuildInsertQuery(tableName, []string{"name", "created_at", "updated_at"}, "RETURNING id")
+	err := r.db.QueryRowContext(ctx, q, e.Name, e.CreatedAt, e.UpdatedAt).Scan(&lastId)
 	if err != nil {
 		return err
 	}
@@ -31,48 +31,51 @@ func (r *Repository[T]) Create(e *entity.Content) error {
 	return nil
 }
 
-func (r *Repository[T]) ReadMany(limit, offset int) ([]entity.Content, error) {
+func (r *Repository[T]) ReadMany(limit, offset int, ctx context.Context) ([]entity.Content, error) {
 	d := []entity.Content{}
-	err := r.db.Select(&d, "SELECT * FROM "+TableName+" LIMIT $1 OFFSET $2", limit, offset)
+	q := postgres.BuildSelectQuery(tableName, []string{}, []string{"is_deleted"}, "LIMIT $2 OFFSET $3")
+	err := r.db.SelectContext(ctx, &d, q, limit, offset)
 	if err != nil {
 		return nil, err
 	}
 	return d, nil
 }
 
-func (r *Repository[T]) ReadOne(id string) (entity.Content, error) {
+func (r *Repository[T]) ReadOne(id string, ctx context.Context) (entity.Content, error) {
 	b := entity.Content{}
-	err := r.db.Get(&b, "SELECT * FROM "+TableName+" WHERE id = $1 LIMIT 1", id)
-	if err != nil {
-		return b, err
-	}
-	return b, nil
+	q := postgres.BuildSelectQuery(tableName, []string{}, []string{"id"}, "LIMIT $2")
+	err := r.db.Get(&b, q, id)
+	return b, err
 }
 
-func (r *Repository[T]) Update(id string, e *entity.Content) (int64, error) {
-	q := "UPDATE " + TableName + " SET name = $2, updated_at = $3 WHERE id = $1"
+func (r *Repository[T]) Update(id string, e entity.Content, ctx context.Context) (int64, error) {
+	q := postgres.BuildUpdateQuery(tableName, []string{"name", "updated_at"}, []string{"id"}, "")
 	res, err := r.db.Exec(q, id, e.Name, e.UpdatedAt)
 	if err != nil {
 		return -1, err
 	}
-	return sqlxpkg.GetRowsAffected(res), nil
+	return sqlxext.GetRowsAffected(res), nil
 }
 
-func (r *Repository[T]) Delete(id string) (int64, error) {
-	q := "DELETE FROM " + TableName + " WHERE id = $1"
+func (r *Repository[T]) Delete(id string, ctx context.Context) (int64, error) {
+	q := postgres.BuildDeleteQuery(tableName, []string{"id"}, "")
 	res, err := r.db.Exec(q, id)
 	if err != nil {
 		return -1, err
 	}
-	return sqlxpkg.GetRowsAffected(res), nil
+	return sqlxext.GetRowsAffected(res), nil
 }
 
-func (r *Repository[T]) createMany(entities []entity.Content, ctx context.Context) error {
+func (r *Repository[T]) DB() *sqlx.DB {
+	return r.db
+}
+
+func (r *Repository[T]) createManyPQ(entities []entity.Content, ctx context.Context) error {
 	txn, err := r.db.Begin()
 	if err != nil {
 		return err
 	}
-	stmt, err := txn.Prepare(pq.CopyIn(TableName, "name", "created_at", "updated_at"))
+	stmt, err := txn.Prepare(pq.CopyIn(tableName, "name", "created_at", "updated_at"))
 	if err != nil {
 		return (err)
 	}

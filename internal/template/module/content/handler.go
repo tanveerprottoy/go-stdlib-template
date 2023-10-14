@@ -38,7 +38,7 @@ func (h *Handler) Create(w http.ResponseWriter, r *http.Request) {
 		response.RespondError(http.StatusBadRequest, constant.Error, err, w)
 		return
 	}
-	e, httpErr := h.service.Create(&d, r.Context())
+	e, httpErr := h.service.Create(d, r.Context())
 	if httpErr.Err != nil {
 		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
 		return
@@ -99,7 +99,7 @@ func (h *Handler) Update(w http.ResponseWriter, r *http.Request) {
 		response.RespondError(http.StatusBadRequest, constant.Error, err, w)
 		return
 	}
-	e, httpErr := h.service.Update(id, &d, nil)
+	e, httpErr := h.service.Update(id, d, r.Context())
 	if httpErr.Err != nil {
 		response.RespondError(httpErr.Code, constant.Error, httpErr.Err.Error(), w)
 		return

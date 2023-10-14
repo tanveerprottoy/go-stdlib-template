@@ -23,10 +23,15 @@ func NewServiceSQL(r postgres.Repository[entity.Content]) *ServiceSQL {
 	return &ServiceSQL{repository: r}
 }
 
-func (s *ServiceSQL) readOneInternal(id string) (entity.Content, errorext.HTTPError) {
+func (s *ServiceSQL) readOneInternal(id string, ctx context.Context) (entity.Content, errorext.HTTPError) {
 	var e entity.Content
-	row := s.repository.ReadOne(id)
-	return postgres.GetEntity[entity.Content](row, &e, &e.Id, &e.Name, &e.CreatedAt, &e.UpdatedAt)
+	row := s.repository.ReadOne(id, ctx)
+	err := row.Err()
+	if err != nil {
+		return e, errorext.HTTPError{Code: http.StatusInternalServerError, Err: err}
+	}
+	httpErr := postgres.ScanRow[entity.Content](row, &e, &e.Id, &e.Name, &e.CreatedAt, &e.UpdatedAt)
+	return e, httpErr
 }
 
 // Create defines the business logic for create post request
@@ -38,7 +43,7 @@ func (s *ServiceSQL) Create(d dto.CreateUpdateContentDTO, ctx context.Context) (
 		CreatedAt: n,
 		UpdatedAt: n,
 	}
-	l, err := s.repository.Create(&e)
+	l, err := s.repository.Create(e, ctx)
 	if err != nil {
 		return e, errorext.BuildDBError(err)
 	}
@@ -52,7 +57,7 @@ func (s *ServiceSQL) ReadMany(limit, page int, ctx context.Context) (map[string]
 	m["limit"] = limit
 	m["page"] = page
 	offset := limit * (page - 1)
-	d, err := s.repository.ReadMany(limit, offset)
+	d, err := s.repository.ReadMany(limit, offset, ctx)
 	if err != nil {
 		return m, errorext.BuildDBError(err)
 	}
@@ -61,7 +66,7 @@ func (s *ServiceSQL) ReadMany(limit, page int, ctx context.Context) (map[string]
 }
 
 func (s *ServiceSQL) ReadOne(id string, ctx context.Context) (entity.Content, errorext.HTTPError) {
-	b, httpErr := s.readOneInternal(id)
+	b, httpErr := s.readOneInternal(id, ctx)
 	if httpErr.Err != nil {
 		return b, errorext.BuildDBError(httpErr)
 	}
@@ -69,13 +74,13 @@ func (s *ServiceSQL) ReadOne(id string, ctx context.Context) (entity.Content, er
 }
 
 func (s *ServiceSQL) Update(id string, d *dto.CreateUpdateContentDTO, ctx context.Context) (entity.Content, errorext.HTTPError) {
-	b, httpErr := s.readOneInternal(id)
+	b, httpErr := s.readOneInternal(id, ctx)
 	if httpErr.Err != nil {
 		return b, errorext.BuildDBError(httpErr)
 	}
 	b.Name = d.Name
 	b.UpdatedAt = timeext.NowUnixMilli()
-	rows, err := s.repository.Update(id, &b)
+	rows, err := s.repository.Update(id, b, ctx)
 	if err != nil {
 		return b, errorext.BuildDBError(err)
 	}
@@ -86,7 +91,7 @@ func (s *ServiceSQL) Update(id string, d *dto.CreateUpdateContentDTO, ctx contex
 }
 
 func (s *ServiceSQL) Delete(id string, ctx context.Context) (entity.Content, errorext.HTTPError) {
-	b, httpErr := s.readOneInternal(id)
+	b, httpErr := s.readOneInternal(id, ctx)
 	if httpErr.Err != nil {
 		return b, errorext.BuildDBError(httpErr.Err)
 	}

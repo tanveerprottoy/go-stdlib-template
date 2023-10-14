@@ -1,11 +1,13 @@
-package postgres
+package pqlient
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	_ "github.com/lib/pq"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
@@ -56,6 +58,16 @@ func GetInstanceAtomic() *Client {
 	return instance
 }
 
+// Ping the database to verify DSN is valid and the
+// server is accessible. If the ping fails exit the program with an error.
+func (d *Client) ping(ctx context.Context) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	if err := d.DB.PingContext(ctx); err != nil {
+		log.Fatalf("ping failed with error: %v", err)
+	}
+}
+
 func (d *Client) init() {
 	// postgres: //jack:secret@pg.example.com:5432/mydb?sslmode=verify-ca&pool_max_conns=10
 	/* dbConn := fmt.Sprintf(
@@ -91,10 +103,10 @@ func (d *Client) init() {
 	}
 	// Ping the database to verify DSN is valid and the
 	// server is accessible
-	ping(context.Background())
+	d.ping(context.Background())
 	log.Println("Successfully connected!")
 	/* db.SetMaxIdleConns(5)
 	db.SetMaxOpenConns(10) */
-	stat := db.Stats()
+	stat := d.DB.Stats()
 	log.Printf("DB.stats: idle=%d, inUse=%d,  maxOpen=%d", stat.Idle, stat.InUse, stat.MaxOpenConnections)
 }

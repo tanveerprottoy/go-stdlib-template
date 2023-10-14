@@ -1,4 +1,4 @@
-package sqlxpkg
+package sqlxext
 
 import (
 	"database/sql"

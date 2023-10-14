@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -15,9 +16,11 @@ func ScanRows[T any](rows *sql.Rows, e *T, params ...any) ([]T, errorext.HTTPErr
 	// Loop through rows, using Scan to assign column data to struct fields.
 	for rows.Next() {
 		if err := rows.Scan(params...); err != nil {
+			log.Println("error: ", err)
 			return nil, errorext.BuildDBError(err)
 		}
 		d = append(d, *e)
+		fmt.Println("scan.e.pointer: ", &e)
 	}
 	return d, errorext.HTTPError{}
 }
@@ -26,6 +29,7 @@ func ScanRows[T any](rows *sql.Rows, e *T, params ...any) ([]T, errorext.HTTPErr
 // must provide pointer address for params
 func ScanRow[T any](row *sql.Row, obj *T, params ...any) errorext.HTTPError {
 	if err := row.Scan(params...); err != nil {
+		log.Println("error: ", err)
 		return errorext.BuildDBError(err)
 	}
 	return errorext.HTTPError{}
@@ -43,13 +47,6 @@ func GetEntities[T any](rows *sql.Rows, obj *T, params ...any) ([]T, errorext.HT
 		d = append(d, *obj)
 	}
 	return d, errorext.HTTPError{}
-}
-
-func GetEntity[T any](row *sql.Row, obj *T, params ...any) (T, errorext.HTTPError) {
-	if err := row.Scan(params...); err != nil {
-		return *obj, errorext.BuildDBError(err)
-	}
-	return *obj, errorext.HTTPError{}
 }
 
 // ScanRowsBasic scans rows

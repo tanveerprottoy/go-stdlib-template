@@ -1,4 +1,4 @@
-package content
+package user
 
 import (
 	"context"
@@ -10,20 +10,20 @@ import (
 	"github.com/jackc/pgx/v5"
 	pgxstdlib "github.com/jackc/pgx/v5/stdlib"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/postgres"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/entity"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/entity"
 )
 
-const tableName = "contents"
+const tableName = "users"
 
-type RepositorySQL[T entity.Content] struct {
+type RepositorySQL[T entity.User] struct {
 	db *sql.DB
 }
 
-func NewRepositorySQL(db *sql.DB) *RepositorySQL[entity.Content] {
-	return &RepositorySQL[entity.Content]{db: db}
+func NewRepositorySQL(db *sql.DB) *RepositorySQL[entity.User] {
+	return &RepositorySQL[entity.User]{db: db}
 }
 
-func (r *RepositorySQL[T]) Create(e entity.Content, ctx context.Context) (string, error) {
+func (r *RepositorySQL[T]) Create(e entity.User, ctx context.Context) (string, error) {
 	var lastID string
 	q := postgres.BuildInsertQuery(tableName, []string{"name", "created_at", "updated_at"}, "RETURNING id")
 	err := r.db.QueryRowContext(ctx, q, e.Name, e.CreatedAt, e.UpdatedAt).Scan(&lastID)
@@ -47,7 +47,7 @@ func (r *RepositorySQL[T]) ReadOne(id string, ctx context.Context) *sql.Row {
 	return r.db.QueryRow(q, id, 1)
 }
 
-func (r *RepositorySQL[T]) Update(id string, e entity.Content, ctx context.Context) (int64, error) {
+func (r *RepositorySQL[T]) Update(id string, e entity.User, ctx context.Context) (int64, error) {
 	q := postgres.BuildUpdateQuery(tableName, []string{"name", "updated_at"}, []string{"id"}, "")
 	res, err := r.db.Exec(q, e.Name, e.UpdatedAt, id)
 	if err != nil {
@@ -70,7 +70,7 @@ func (r *RepositorySQL[T]) DB() *sql.DB {
 }
 
 // createMany Batch inserts contents
-func (r *Repository[T]) createMany(entities []entity.Content, ctx context.Context) error {
+func (r *RepositorySQL[T]) createMany(entities []entity.User, ctx context.Context) error {
 	ctx1 := context.Background()
 	ctx, cancelFn := context.WithTimeout(ctx1, 20*time.Second)
 	defer cancelFn()

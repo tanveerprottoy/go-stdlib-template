@@ -1,11 +1,13 @@
 package postgres
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"log"
 	"sync"
 	"sync/atomic"
+	"time"
 
 	_ "github.com/lib/pq"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
@@ -56,9 +58,19 @@ func GetInstanceAtomic() *Client {
 	return instance
 }
 
+// Ping the database to verify DSN is valid and the
+// server is accessible. If the ping fails exit the program with an error.
+func (d *Client) ping(ctx context.Context) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+	if err := d.DB.PingContext(ctx); err != nil {
+		log.Fatalf("ping failed with error: %v", err)
+	}
+}
+
 func (d *Client) init() {
 	// postgres: //jack:secret@pg.example.com:5432/mydb?sslmode=verify-ca&pool_max_conns=10
-	/* dbConn := fmt.Sprintf(
+	/* conn := fmt.Sprintf(
 		"postgres://%s:%s@%s:%s/%s?%s",
 		config.GetEnvValue("DB_USERNAME"),
 		config.GetEnvValue("DB_PASS"),
@@ -67,7 +79,7 @@ func (d *Client) init() {
 		config.GetEnvValue("DB_NAME"),
 		config.GetJsonValue("dbSslMode"),
 	) */
-	dbURI := fmt.Sprintf(
+	conn := fmt.Sprintf(
 		"host=%s port=%s user=%s "+
 			"password=%s dbname=%s sslmode=%s",
 		config.GetJsonValue("dbHost"),
@@ -79,20 +91,29 @@ func (d *Client) init() {
 	)
 	dbRootCert := config.GetJsonValue("dbRootCert")
 	if dbRootCert != nil {
-		dbURI += fmt.Sprintf(" sslmode=require sslrootcert=%s sslcert=%s sslkey=%s",
+		conn += fmt.Sprintf(" sslrootcert=%s sslcert=%s sslkey=%s",
 			dbRootCert.(string), config.GetJsonValue("dbCert").(string), config.GetJsonValue("dbKey").(string))
-	} else {
-		dbURI += " sslmode=disable"
 	}
 	var err error
-	d.DB, err = sql.Open("postgres", dbURI)
+	// Opening a driver typically will not attempt to connect to the database.
+	d.DB, err = sql.Open("pgx", conn)
 	if err != nil {
-		panic(err)
+		// This will not be a connection error, but a DSN parse error or
+		// another initialization error.
+		log.Fatalf("db drive open failed with error: %v", err)
 	}
-	// ping is necessary to create connection
-	err = d.DB.Ping()
-	if err != nil {
-		panic(err)
-	}
+	// Ping the database to verify DSN is valid and the
+	// server is accessible
+	d.ping(context.Background())
 	log.Println("Successfully connected!")
+	// set max idle & open connections
+	/* d.DB.SetMaxIdleConns(maxIdleConns)
+	d.DB.SetMaxOpenConns(maxOpenConns) */
+	// print the db stats
+	stat := d.DB.Stats()
+	log.Printf("DB.stats: idle=%d, inUse=%d,  maxOpen=%d", stat.Idle, stat.InUse, stat.MaxOpenConnections)
+}
+
+func (d *Client) Close() {
+	d.DB.Close()
 }

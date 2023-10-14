@@ -12,7 +12,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/go-playground/validator/v10"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/sqlxpkg"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/sqlxext"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/middleware"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/router"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3ext"
@@ -31,7 +31,7 @@ import (
 type App struct {
 	Server             *http.Server
 	idleConnsClosed    chan struct{}
-	DBClient           *sqlxpkg.Client
+	DBClient           *sqlxext.Client
 	ClientsS3          *s3ext.Clients
 	HTTPClientProvider *httpext.ClientProvider
 	router             *router.Router
@@ -54,7 +54,7 @@ func NewApp() *App {
 
 // initDB initializes DB client
 func (a *App) initDB() {
-	a.DBClient = sqlxpkg.GetInstance()
+	a.DBClient = sqlxext.GetInstance()
 }
 
 // // createDir creates uploads directory
