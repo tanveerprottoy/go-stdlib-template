@@ -6,7 +6,7 @@ import (
 	"io"
 	"strconv"
 
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/jsonext"
 )
 
 func IOReaderToBytes(r io.Reader) ([]byte, error) {

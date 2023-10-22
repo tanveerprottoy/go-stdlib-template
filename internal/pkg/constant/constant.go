@@ -44,3 +44,7 @@ const RBACError = "rbac error"
 
 // lat lng
 const InvalidLatLng = 300
+
+const ContextPayloadKey = "ContextPayload"
+
+const ReadFromEmbedFile = true

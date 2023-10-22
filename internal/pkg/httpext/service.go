@@ -4,7 +4,7 @@ import (
 	"io"
 	"net/http"
 
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/jsonext"
 )
 
 func Request[T any](method string, url string, header http.Header, body io.Reader, client *ClientProvider) (*T, map[string]any, error) {

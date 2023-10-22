@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/jsonext"
 )
 
 // ValidateStruct parses and validates the request body

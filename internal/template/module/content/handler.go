@@ -9,8 +9,8 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/validatorext"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/dto"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/adapter"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/httpext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/adapter"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/httpext"
 )
 
 // Hanlder is responsible for extracting data

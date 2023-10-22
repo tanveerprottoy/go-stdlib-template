@@ -6,9 +6,9 @@ import (
 	"sync"
 	"sync/atomic"
 
+	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/jmoiron/sqlx"
-	_ "github.com/lib/pq"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/config"
 )
 
 var (
@@ -62,7 +62,7 @@ func (c *Client) init() {
 		"password=%s dbname=%s sslmode=disable",
 		config.GetEnvValue("DB_HOST"), config.GetEnvValue("DB_PORT"), config.GetEnvValue("DB_USER"), config.GetEnvValue("DB_PASS"), config.GetEnvValue("DB_NAME"))
 	var err error
-	c.DB, err = sqlx.Open("postgres", info)
+	c.DB, err = sqlx.Open("pgx", info)
 	if err != nil {
 		panic(err)
 	}

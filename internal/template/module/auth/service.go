@@ -8,8 +8,8 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/entity"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/httpext"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jwtext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/httpext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/jwtext"
 )
 
 type Service struct {

@@ -7,8 +7,8 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload/dto"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/core"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/core"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/jsonext"
 )
 
 type Handler struct {

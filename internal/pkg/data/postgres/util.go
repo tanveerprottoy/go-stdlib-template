@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/errorext"
 )
 
 // ScanRows convert rows to struct slice

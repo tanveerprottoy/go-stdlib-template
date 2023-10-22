@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3ext"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/config"
 )
 
 type Service struct {

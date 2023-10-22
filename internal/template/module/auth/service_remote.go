@@ -7,8 +7,8 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/auth/dto"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/httpext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/config"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/httpext"
 )
 
 type ServiceRemote struct {

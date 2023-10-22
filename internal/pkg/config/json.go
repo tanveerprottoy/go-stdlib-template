@@ -6,7 +6,7 @@ import (
 	"log"
 
 	"github.com/tanveerprottoy/stdlib-go-template/config/embedded"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
 )
 

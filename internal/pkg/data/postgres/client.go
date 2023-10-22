@@ -9,8 +9,8 @@ import (
 	"sync/atomic"
 	"time"
 
-	_ "github.com/lib/pq"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
+	_ "github.com/jackc/pgx/v5/stdlib"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/config"
 )
 
 var (

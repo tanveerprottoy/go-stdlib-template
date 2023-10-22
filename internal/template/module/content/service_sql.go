@@ -2,13 +2,14 @@ package content
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/postgres"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/errorext"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/content/entity"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorext"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/timeext"
 )
 
@@ -68,7 +69,7 @@ func (s *ServiceSQL) ReadMany(limit, page int, ctx context.Context) (map[string]
 func (s *ServiceSQL) ReadOne(id string, ctx context.Context) (entity.Content, errorext.HTTPError) {
 	b, httpErr := s.readOneInternal(id, ctx)
 	if httpErr.Err != nil {
-		return b, errorext.BuildDBError(httpErr)
+		return b, errorext.BuildDBError(httpErr.Err)
 	}
 	return b, errorext.HTTPError{}
 }
@@ -76,7 +77,7 @@ func (s *ServiceSQL) ReadOne(id string, ctx context.Context) (entity.Content, er
 func (s *ServiceSQL) Update(id string, d *dto.CreateUpdateContentDTO, ctx context.Context) (entity.Content, errorext.HTTPError) {
 	b, httpErr := s.readOneInternal(id, ctx)
 	if httpErr.Err != nil {
-		return b, errorext.BuildDBError(httpErr)
+		return b, errorext.BuildDBError(httpErr.Err)
 	}
 	b.Name = d.Name
 	b.UpdatedAt = timeext.NowUnixMilli()
@@ -87,7 +88,7 @@ func (s *ServiceSQL) Update(id string, d *dto.CreateUpdateContentDTO, ctx contex
 	if rows > 0 {
 		return b, errorext.HTTPError{}
 	}
-	return b, errorext.HTTPError{Code: http.StatusBadRequest, Err: errorext.NewError(constant.OperationNotSuccess)}
+	return b, errorext.HTTPError{Code: http.StatusBadRequest, Err: errors.New(constant.OperationNotSuccess)}
 }
 
 func (s *ServiceSQL) Delete(id string, ctx context.Context) (entity.Content, errorext.HTTPError) {
@@ -102,5 +103,5 @@ func (s *ServiceSQL) Delete(id string, ctx context.Context) (entity.Content, err
 	if rows > 0 {
 		return b, errorext.HTTPError{}
 	}
-	return b, errorext.HTTPError{Code: http.StatusBadRequest, Err: errorext.NewError(constant.OperationNotSuccess)}
+	return b, errorext.HTTPError{Code: http.StatusBadRequest, Err: errors.New(constant.OperationNotSuccess)}
 }

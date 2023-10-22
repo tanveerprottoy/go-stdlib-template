@@ -22,9 +22,9 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user"
 	modulerouter "github.com/tanveerprottoy/stdlib-go-template/internal/template/router"
-	configpkg "github.com/tanveerprottoy/stdlib-go-template/pkg/config"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/httpext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/httpext"
 )
 
 // App struct
@@ -64,8 +64,8 @@ func (a *App) createDir() {
 
 // initS3 initializes s3
 func (a *App) initS3() {
-	s3Region := configpkg.GetEnvValue("S3_REGION")
-	s3Endpoint := configpkg.GetEnvValue("S3_ENDPOINT")
+	s3Region := config.GetEnvValue("S3_REGION")
+	s3Endpoint := config.GetEnvValue("S3_ENDPOINT")
 	endpointResolverFunc := s3.EndpointResolverFunc(func(region string, options s3.EndpointResolverOptions) (aws.Endpoint, error) {
 		if s3Endpoint != "" {
 			return aws.Endpoint{
@@ -79,7 +79,7 @@ func (a *App) initS3() {
 	})
 	a.ClientsS3 = s3ext.GetInstance()
 	a.ClientsS3.Init(s3.Options{
-		Region: configpkg.GetEnvValue("S3_REGION"),
+		Region: config.GetEnvValue("S3_REGION"),
 		// Credentials: aws.NewCredentialsCache(credentials.NewStaticCredentialsProvider(config.GetEnvValue("S3_ACCESS_KEY"), config.GetEnvValue("S3_SECRET_KEY"), "")),
 		// EndpointResolver: endpointResolverFunc,
 		// UsePathStyle: true,
@@ -132,7 +132,7 @@ func (a *App) initModuleRouters() {
 // initServer initializes the server
 func (a *App) initServer() {
 	a.Server = &http.Server{
-		Addr:    ":" + configpkg.GetEnvValue("APP_PORT"),
+		Addr:    ":" + config.GetEnvValue("APP_PORT"),
 		Handler: a.router.Mux,
 	}
 }
@@ -204,7 +204,7 @@ func (a *App) RunTLS() {
 
 // RunListenAndServe runs the server
 func (a *App) RunListenAndServe() {
-	err := http.ListenAndServe(":"+configpkg.GetEnvValue("APP_PORT"), a.router.Mux)
+	err := http.ListenAndServe(":"+config.GetEnvValue("APP_PORT"), a.router.Mux)
 	if err != nil {
 		panic(err)
 	}

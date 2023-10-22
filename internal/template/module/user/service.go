@@ -2,13 +2,14 @@ package user
 
 import (
 	"context"
+	"errors"
 	"net/http"
 
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/sqlxext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/errorext"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/dto"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user/entity"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/errorext"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/timeext"
 )
 
@@ -77,7 +78,7 @@ func (s *Service) Update(id string, d *dto.CreateUpdateUserDTO, ctx context.Cont
 	if rows > 0 {
 		return b, errorext.HTTPError{}
 	}
-	return b, errorext.HTTPError{Code: http.StatusBadRequest, Err: errorext.NewError(constant.OperationNotSuccess)}
+	return b, errorext.HTTPError{Code: http.StatusBadRequest, Err: errors.New(constant.OperationNotSuccess)}
 }
 
 func (s *Service) Delete(id string, ctx context.Context) (entity.User, errorext.HTTPError) {
@@ -92,5 +93,5 @@ func (s *Service) Delete(id string, ctx context.Context) (entity.User, errorext.
 	if rows > 0 {
 		return b, errorext.HTTPError{}
 	}
-	return b, errorext.HTTPError{Code: http.StatusBadRequest, Err: errorext.NewError(constant.OperationNotSuccess)}
+	return b, errorext.HTTPError{Code: http.StatusBadRequest, Err: errors.New(constant.OperationNotSuccess)}
 }

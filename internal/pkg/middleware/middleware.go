@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/jwtext"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/response"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/constant"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jwtext"
 )
 
 // JSONContentTypeMiddleWare content type json setter middleware

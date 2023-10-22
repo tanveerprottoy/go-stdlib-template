@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"github.com/go-chi/chi"
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/jsonext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/jsonext"
 )
 
 func GetURLParam(r *http.Request, key string) string {
