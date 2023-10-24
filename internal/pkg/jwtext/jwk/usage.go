@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/tanveerprottoy/stdlib-go-template/pkg/config"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/config"
 )
 
 func Usage() error {
