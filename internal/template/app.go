@@ -11,8 +11,10 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/go-playground/validator/v10"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/constant"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/data/sqlxext"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/httpext"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/middleware"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/router"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3ext"
@@ -22,9 +24,7 @@ import (
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/fileupload"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/template/module/user"
 	modulerouter "github.com/tanveerprottoy/stdlib-go-template/internal/template/router"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/pkg/file"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/httpext"
 )
 
 // App struct
@@ -60,6 +60,10 @@ func (a *App) initDB() {
 // // createDir creates uploads directory
 func (a *App) createDir() {
 	file.CreateDirIfNotExists("./uploads")
+}
+
+func (a *App) initRouter() {
+	a.router = router.NewRouter()
 }
 
 // initS3 initializes s3
@@ -173,7 +177,7 @@ func (a *App) ShutdownServer(ctx context.Context) {
 func (a *App) initComponents() {
 	a.initDB()
 	a.createDir()
-	a.router = router.NewRouter()
+	a.initRouter()
 	a.initS3()
 	a.initValidator()
 	a.initModules()
