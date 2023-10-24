@@ -27,7 +27,7 @@ func (r *Repository[T]) Create(e entity.Content, ctx context.Context) error {
 	if err != nil {
 		return err
 	}
-	e.Id = lastId
+	e.ID = lastId
 	return nil
 }
 

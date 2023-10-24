@@ -31,7 +31,7 @@ func (s *ServiceSQL) readOneInternal(id string, ctx context.Context) (entity.Con
 	if err != nil {
 		return e, errorext.HTTPError{Code: http.StatusInternalServerError, Err: err}
 	}
-	httpErr := postgres.ScanRow[entity.Content](row, &e, &e.Id, &e.Name, &e.CreatedAt, &e.UpdatedAt)
+	httpErr := postgres.ScanRow[entity.Content](row, &e, &e.ID, &e.Name, &e.CreatedAt, &e.UpdatedAt)
 	return e, httpErr
 }
 
@@ -48,7 +48,7 @@ func (s *ServiceSQL) Create(d dto.CreateUpdateContentDTO, ctx context.Context) (
 	if err != nil {
 		return e, errorext.BuildDBError(err)
 	}
-	e.Id = l
+	e.ID = l
 	return e, errorext.HTTPError{}
 }
 
@@ -58,8 +58,14 @@ func (s *ServiceSQL) ReadMany(limit, page int, ctx context.Context) (map[string]
 	m["limit"] = limit
 	m["page"] = page
 	offset := limit * (page - 1)
-	d, err := s.repository.ReadMany(limit, offset, ctx)
+	rows, err := s.repository.ReadMany(limit, offset, ctx)
 	if err != nil {
+		return m, errorext.BuildDBError(err)
+	}
+	defer rows.Close()
+	var e entity.Content
+	d, httpErr := postgres.ScanRows(rows, &e, &e.ID, &e.Name, &e.CreatedAt, &e.UpdatedAt)
+	if httpErr.Err != nil {
 		return m, errorext.BuildDBError(err)
 	}
 	m["items"] = d
