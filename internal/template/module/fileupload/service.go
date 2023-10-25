@@ -10,9 +10,9 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/google/uuid"
+	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/config"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/multipart"
 	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/s3ext"
-	"github.com/tanveerprottoy/stdlib-go-template/internal/pkg/config"
 )
 
 type Service struct {
@@ -122,7 +122,7 @@ func (s *Service) UploadManyWithKeysDisk(r *http.Request) (map[string][]string, 
 }
 
 func (s *Service) GetPresignedURLForOne(key string, ctx context.Context) (map[string]string, error) {
-	m := map[string]string{"signedUrl": ""}
+	m := map[string]string{"url": ""}
 	o, err := s3ext.GetObjectPresigned(
 		&s3.GetObjectInput{
 			Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
@@ -137,12 +137,12 @@ func (s *Service) GetPresignedURLForOne(key string, ctx context.Context) (map[st
 	if err != nil {
 		return m, err
 	}
-	m["signedUrl"] = o.URL
+	m["url"] = o.URL
 	return m, nil
 }
 
 func (s *Service) PutPresignedURLForOne(key string, ctx context.Context) (map[string]string, error) {
-	m := map[string]string{"signedUrl": ""}
+	m := map[string]string{"url": ""}
 	o, err := s3ext.PutObjectPresigned(&s3.PutObjectInput{
 		Bucket: aws.String(config.GetEnvValue("BUCKET_NAME")),
 		Key:    aws.String(key),
@@ -152,6 +152,6 @@ func (s *Service) PutPresignedURLForOne(key string, ctx context.Context) (map[st
 	if err != nil {
 		return m, err
 	}
-	m["signedUrl"] = o.URL
+	m["url"] = o.URL
 	return m, nil
 }
