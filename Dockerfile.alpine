@@ -3,15 +3,21 @@ FROM golang:1.19-alpine AS build
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
+COPY ./go.mod ./go.sum ./
 
 COPY ./config/container.env ./.env
 
+# COPY ./config/configs.json ./config/embedded/configs.json
+
 RUN go mod download
 
-COPY ./ ./
+COPY *.go ./
 
 RUN go build -o ./app ./cmd/template/main.go
+
+# Run the tests in the container
+FROM build AS run-test
+RUN go test -v ./...
 
 # deploy stage
 FROM golang:1.19-alpine
