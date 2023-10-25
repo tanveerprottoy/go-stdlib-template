@@ -11,7 +11,10 @@ COPY ./config/container.env ./.env
 
 RUN go mod download
 
-COPY *.go ./
+COPY ./ ./
+
+# might not work with multiple packages
+# COPY *.go ./
 
 RUN go build -o ./app ./cmd/template/main.go
 
