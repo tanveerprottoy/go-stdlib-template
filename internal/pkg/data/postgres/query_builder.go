@@ -20,10 +20,27 @@ func BuildInsertQuery(tableName string, columns []string, clause string) string 
 	return q + cols + vals + " " + clause
 }
 
-func BuildSelectQuery(tableName string, projections []string, whereClauseCols []string, clause string) string {
+func BuildSelectQuery(tableName string, projections []string, whereClauseCols []string, args ...string) string {
 	q := "SELECT "
 	p := ""
 	w := ""
+	op := "AND"
+	cl := ""
+	// set operator & clause
+	// clause is always on the first index
+	argLen := len(args)
+	if argLen > 0 {
+		cl = args[0]
+		if argLen > 1 {
+			op = args[1]
+		}
+	}
+	if len(args) == 2 {
+		cl = args[0]
+		op = args[1]
+	} else if len(args) == 1 {
+		cl = args[0]
+	}
 	if len(projections) > 0 {
 		for _, v := range projections {
 			p += v + ", "
@@ -37,15 +54,16 @@ func BuildSelectQuery(tableName string, projections []string, whereClauseCols []
 	// where clause length
 	lenWhereClause := len(whereClauseCols)
 	if lenWhereClause > 0 {
+		opLen := len(op)
 		w += " WHERE "
 		for i, v := range whereClauseCols {
-			w += v + " = $" + strconv.Itoa(i+1) + ", "
+			w += v + " = $" + strconv.Itoa(i+1) + " " + op + " "
 		}
-		// remove trailing space & comma
-		// there are two chars to be removed
-		w = w[:len(w)-2]
+		// remove trailing space & operator
+		// there are two spaces and operator length to be removed
+		w = w[:len(w)-opLen-2]
 	}
-	return q + p + " FROM " + tableName + w + " " + clause
+	return q + p + " FROM " + tableName + w + " " + cl
 }
 
 func BuildUpdateQuery(tableName string, columns []string, whereClauseCols []string, clause string) string {

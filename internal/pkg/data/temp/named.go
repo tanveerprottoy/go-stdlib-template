@@ -1,5 +1,6 @@
 package temp
 
+/*
 import (
 	"bytes"
 	"database/sql"
@@ -444,4 +445,4 @@ func NamedExec(e Ext, query string, arg interface{}) (sql.Result, error) {
 		return nil, err
 	}
 	return e.Exec(q, args...)
-}
+} */

@@ -1,5 +1,6 @@
 package temp
 
+/* 
 import (
 	"database/sql"
 	"database/sql/driver"
@@ -1047,4 +1048,4 @@ func missingFields(transversals [][]int) (field int, err error) {
 		}
 	}
 	return 0, nil
-}
+} */
