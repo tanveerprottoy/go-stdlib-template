@@ -26,7 +26,7 @@ func NewServiceSQL(r postgres.Repository[entity.Content]) *ServiceSQL {
 
 func (s *ServiceSQL) readOneInternal(id string, ctx context.Context) (entity.Content, errorext.HTTPError) {
 	var e entity.Content
-	row := s.repository.ReadOne(id, ctx)
+	row := s.repository.ReadOne(ctx, id)
 	err := row.Err()
 	if err != nil {
 		return e, errorext.HTTPError{Code: http.StatusInternalServerError, Err: err}
@@ -44,7 +44,7 @@ func (s *ServiceSQL) Create(d dto.CreateUpdateContentDTO, ctx context.Context) (
 		CreatedAt: n,
 		UpdatedAt: n,
 	}
-	l, err := s.repository.Create(e, ctx)
+	l, err := s.repository.Create(ctx, e)
 	if err != nil {
 		return e, errorext.BuildDBError(err)
 	}
@@ -58,7 +58,7 @@ func (s *ServiceSQL) ReadMany(limit, page int, ctx context.Context) (map[string]
 	m["limit"] = limit
 	m["page"] = page
 	offset := limit * (page - 1)
-	rows, err := s.repository.ReadMany(limit, offset, ctx)
+	rows, err := s.repository.ReadMany(ctx, limit, offset, false)
 	if err != nil {
 		return m, errorext.BuildDBError(err)
 	}
@@ -87,7 +87,7 @@ func (s *ServiceSQL) Update(id string, d *dto.CreateUpdateContentDTO, ctx contex
 	}
 	b.Name = d.Name
 	b.UpdatedAt = timeext.NowUnixMilli()
-	rows, err := s.repository.Update(id, b, ctx)
+	rows, err := s.repository.Update(ctx, id, b)
 	if err != nil {
 		return b, errorext.BuildDBError(err)
 	}
@@ -102,7 +102,7 @@ func (s *ServiceSQL) Delete(id string, ctx context.Context) (entity.Content, err
 	if httpErr.Err != nil {
 		return b, errorext.BuildDBError(httpErr.Err)
 	}
-	rows, err := s.repository.Delete(id, ctx)
+	rows, err := s.repository.Delete(ctx, id)
 	if err != nil {
 		return b, errorext.BuildDBError(err)
 	}

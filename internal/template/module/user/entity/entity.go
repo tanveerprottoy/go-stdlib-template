@@ -1,5 +1,7 @@
 package entity
 
+import "database/sql"
+
 type User struct {
 	ID   string `db:"id" json:"id"`
 	Name string `db:"name" json:"name"`
@@ -17,4 +19,12 @@ type User struct {
 type UserAddressDTO struct {
 	Street string `db:"street" json:"street"`
 	City   string `db:"city" json:"city"`
+}
+
+func (c *User) ScanRows(rows *sql.Rows) error {
+	return nil
+}
+
+func (c *User) ScanRow(row *sql.Row) error {
+	return nil
 }

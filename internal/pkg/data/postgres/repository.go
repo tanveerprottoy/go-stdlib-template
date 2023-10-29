@@ -6,15 +6,15 @@ import (
 )
 
 type Repository[T any] interface {
-	Create(e T, ctx context.Context) (string, error)
+	Create(ctx context.Context, e T, args ...any) (string, error)
 
-	ReadMany(limit, offset int, ctx context.Context) (*sql.Rows, error)
+	ReadMany(ctx context.Context, limit, offset int, args ...any) (*sql.Rows, error)
 
-	ReadOne(id string, ctx context.Context) *sql.Row
+	ReadOne(ctx context.Context, id string, args ...any) *sql.Row
 
-	Update(id string, e T, ctx context.Context) (int64, error)
+	Update(ctx context.Context, id string, e T, args ...any) (int64, error)
 
-	Delete(id string, ctx context.Context) (int64, error)
+	Delete(ctx context.Context, id string, args ...any) (int64, error)
 
 	DB() *sql.DB
 }
