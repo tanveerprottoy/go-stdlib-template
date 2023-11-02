@@ -34,7 +34,7 @@ func (r *RepositorySQL[T]) Create(ctx context.Context, e entity.User, args ...an
 }
 
 func (r *RepositorySQL[T]) ReadMany(ctx context.Context, limit, offset int, args ...any) (*sql.Rows, error) {
-	q := postgres.BuildSelectQuery(tableName, []string{}, []string{"is_deleted"}, "LIMIT $2 OFFSET $3")
+	q := postgres.BuildSelectQuery(tableName, []string{}, []string{"is_deleted", "name"}, "LIMIT $2 OFFSET $3", "OR")
 	rows, err := r.db.QueryContext(ctx, q, args[0].(bool), limit, offset)
 	if err != nil {
 		return nil, err
